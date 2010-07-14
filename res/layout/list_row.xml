@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_height="wrap_content" android:layout_width="fill_parent"  android:orientation="vertical">
+	<TextView android:text="@+id/TextView01" android:id="@+id/ListIndex" android:layout_width="fill_parent" android:layout_height="wrap_content"></TextView>
+	<TextView android:text="@+id/TextView02" android:layout_height="wrap_content" android:id="@+id/ListPhone" android:layout_width="fill_parent"></TextView>
+	<TextView android:text="@+id/TextView03" android:layout_height="wrap_content" android:id="@+id/ListTrans" android:layout_width="fill_parent"></TextView>
+	<TextView android:text="@+id/TextView04" android:layout_height="wrap_content" android:id="@+id/ListSample" android:layout_width="fill_parent"></TextView>
+	<Button  android:id="@+id/ListMoreButton" android:layout_width="fill_parent" android:layout_height="wrap_content"></Button>
+	<View android:id="@+id/ListHr" android:layout_width="fill_parent" android:layout_height="1px"></View>
+</LinearLayout>
