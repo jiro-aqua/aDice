@@ -7,31 +7,26 @@ Android用PDIC形式辞書ビューワー
 
 対応OS：Android 1.5 / 1.6 / 2.1 / 2.2 ～
 
-動作確認機種：HT-03A[docomo]  / SO-01B(Xperia X10)[Docomo] / X06HT(HTC Desire)[Softbank] / NEXUS ONE 
+動作確認機種：HT-03A[docomo] / SO-01B(Xperia X10)[docomo] / X06HT(HTC Desire)[Softbank] / NEXUS ONE 
 
 
 ■ダウンロード (Android Market)
-
 http://market.android.com/search?q=pname:jp.sblo.pandora.adice
 
-■特徴
 
-ローカル辞書ファイルによる高速なインクリメンタルサーチ 
-どこまでも辞書を読み進むことの出来るビュワー画面
+■説明書
+http://sites.google.com/site/aquamarinepandora/home/adice
 
 
 ■辞書について
-
 以下のPDIC形式辞書に対応します。
 ・Unicode(BOCU-1) Hyper辞書形式 ver6.00 (PDIC/Unicode 5.00以降)
 
 ■開発環境
-  ・Eclipse for Java
-  ・Android SDK (SDK version=3,Cupcake)
+・Eclipse for Java
+・Android SDK (SDK version 3 Cupcake)
 
 ■本ソフトウェアについて
-
- 
 ・このソフトウェアは以下のライセンスにて配布します。
 
 NYSL Version 0.9982
@@ -60,19 +55,20 @@ D. 以上の３項は、ソース・実行バイナリの双方に適用され�
 
 また、本ソフトウェアには、下記プロジェクトの一部が含まれています。これらについては、それぞれの作者のライセンスに従います。
 
-PDIC/Unicode by TaN.　 http://homepage3.nifty.com/TaN/unicode/
+PDIC/Unicode by TaN.
+  http://homepage3.nifty.com/TaN/unicode/
 
 Doulos SIL Font　  http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&item_id=DoulosSILfont
   Copyright (c) 1994-2009, SIL International (http://scripts.sil.org/) with Reserved Font Names "Doulos" and "SIL". 
   This Font Software is licensed under the SIL Open Font License, Version 1.1. 
   This license is copied below, and is also available with a FAQ at: http://scripts.sil.org/OFL 
 
-Thai and Vietnamese font by Sittiphol Phanvilai(NuuNeoI).  http://www.nuuneoi.com/blog/blog.php?read_id=296 
+Thai and Vietnamese font by Sittiphol Phanvilai(NuuNeoI).  
+  http://www.nuuneoi.com/blog/blog.php?read_id=296 
 
 Crash Report Library & Server by Adamrocker & benishouga.
   http://www.adamrocker.com/blog/288/bug-report-system-for-android.html
   http://aexceptions.appspot.com/
-
 
 ---------------------------------------------------------- 
 Copyright (C) 2010, Aquamarine Networks. 

@@ -165,13 +165,17 @@ class Index implements IdicInfo
 		System.arraycopy(__word.array(), 0, _word, 0, limit);
 		int _wordlen = _word.length;
 
+		int[] indexPtr = mIndexPtr;
+		int blockbits = m_blockbits;
+		IndexCache indexCache = mIndexCache;
+
 		for (int i = 0; i < 32; i++) {
 			if ((max - min) <= 1) {
 				return min;
 			}
 			final int look = (min + max) / 2;
-			final int len = mIndexPtr[look + 1] - mIndexPtr[look] - m_blockbits;
-			final int comp = mIndexCache.compare( _word, 0, _wordlen, mIndexPtr[look], len);
+			final int len = indexPtr[look + 1] - indexPtr[look] - blockbits;
+			final int comp = indexCache.compare( _word, 0, _wordlen, indexPtr[look], len);
 			if ( comp < 0 ) {
 				max = look;
 			} else if ( comp > 0 ){

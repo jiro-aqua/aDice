@@ -70,5 +70,10 @@
 <string name="clipboardsearchsummaryon">Clipboard Search is enable</string>
 <string name="clipboardsearchsummaryoff">Clipboard Search is desable</string>
 
+<string name="fontmanager">Font Manager</string>
+<string name="fontmanager_name">Font Manager</string>
+<string name="addfont">Add font</string>
+<string name="label_ok">OK</string>
+
 
 </resources>

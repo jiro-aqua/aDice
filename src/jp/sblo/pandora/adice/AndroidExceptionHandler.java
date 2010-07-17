@@ -4,8 +4,8 @@
 
 package jp.sblo.pandora.adice;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -44,19 +44,19 @@ public class AndroidExceptionHandler implements UncaughtExceptionHandler {
 	private File mBugFile;
 
 	public static void bind(Context context, String appId) {
-//		ApplicationInfo appInfo;
-//		try {
-//			appInfo = context.getPackageManager().getApplicationInfo(
-//					context.getPackageName(),
-//					0);
-//		}
-//		catch( NameNotFoundException e) {
-//			return ;
-//		}
-//		if (( appInfo !=null && (appInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) == ApplicationInfo.FLAG_DEBUGGABLE)){
-//			// DEBUG　モードでは何もしない
-//			return ;
-//		}
+		ApplicationInfo appInfo;
+		try {
+			appInfo = context.getPackageManager().getApplicationInfo(
+					context.getPackageName(),
+					0);
+		}
+		catch( NameNotFoundException e) {
+			return ;
+		}
+		if (( appInfo !=null && (appInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) == ApplicationInfo.FLAG_DEBUGGABLE)){
+			// DEBUGモードでは何もしない
+			return ;
+		}
 
 		// release モードでのみクラッシュレポートを動作させる
 		AndroidExceptionHandler handler = new AndroidExceptionHandler(context,

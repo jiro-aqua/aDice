@@ -1,7 +1,7 @@
 package jp.sblo.pandora.adice;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -33,54 +34,58 @@ import jp.sblo.pandora.dice.Idice;
 
 public class SettingsActivity extends PreferenceActivity implements OnPreferenceChangeListener {
 
-//	public static final String KEY_CONJUGATIONDELAY = "ConjugationDelay";
 	public static final String KEY_DELAYSEARCH = "DelaySearch";
 	public static final String KEY_DICS = "dics";
 	public static final String KEY_ADD_DICTIONARY = "Add Dictionary";
 	public static final String KEY_REMOVE_THE_DICTIONARY = "|Remove the dictionary";
-	public static final String KEY_EXAMPLEFONTSIZE = "Examplefontsize";
-	public static final String KEY_PHONEFONTSIZE = "Phonefontsize";
-	public static final String KEY_MEANINGFONTSIZE = "Meaningfontsize";
-	public static final String KEY_INDEXFONTSIZE = "indexfontsize";
+	public static final String KEY_EXAMPLEFONTSIZE_DEF = "Examplefontsize";
+	public static final String KEY_PHONEFONTSIZE_DEF = "Phonefontsize";
+	public static final String KEY_MEANINGFONTSIZE_DEF = "Meaningfontsize";
+	public static final String KEY_INDEXFONTSIZE_DEF = "indexfontsize";
 	public static final String KEY_USE = "|use";
-//	public static final String KEY_IRREG = "|IRREG";
 	public static final String KEY_ENGLISH = "|english";
 	public static final String KEY_RESULTNUM = "|resultnum";
 	public static final String KEY_DICNAME = "|dicname";
-//	public static final String KEY_ACCENT = "|accent";
 	public static final String KEY_MOVE_UP = "|MoveUp";
 	public static final String KEY_MOVE_DOWN = "|MoveDown";
-	public static final String KEY_THAI = "|thai";
+	public static final String KEY_THAI = "thai";
 	public static final String KEY_FASTSCROLL = "fastscroll";
 	public static final String KEY_CLIPBOARD_SEARCH = "clipboardsearch";
+	public static final String KEY_INDEXFONT  = "|indexfont" ;
+	public static final String KEY_PHONEFONT= "|phonefont" ;
+	public static final String KEY_EXAMPLEFONT= "|examplefont" ;
+	public static final String KEY_MEANINGFONT= "|trasnfont" ;
+	public static final String KEY_EXAMPLEFONTSIZE = "|Examplefontsize";
+	public static final String KEY_PHONEFONTSIZE = "|Phonefontsize";
+	public static final String KEY_MEANINGFONTSIZE = "|Meaningfontsize";
+	public static final String KEY_INDEXFONTSIZE = "|indexfontsize";
 
-	private final static String DICNAME_PATTERN[]={
-		"/EIJI-([0-9]+).*\\.DIC",
-		"/WAEI-([0-9]+).*\\.DIC",
-		"/REIJI([0-9]+).*\\.DIC",
-		"/RYAKU([0-9]+).*\\.DIC",
+
+	static class DicTemplate {
+		public String pattern;
+		public int resourceDicname;
+		public boolean englishFlag;
+
+		public DicTemplate( String a, int b , boolean c )
+		{
+			pattern = a;
+			resourceDicname =b;
+			englishFlag =c;
+		}
+	}
+	private final static DicTemplate DICNTEMPLATE[]={
+		new DicTemplate( "/EIJI-([0-9]+).*\\.DIC",	     R.string.dicname_eijiro,	     true ),
+		new DicTemplate( "/WAEI-([0-9]+).*\\.DIC",       R.string.dicname_waeijiro,      false),
+		new DicTemplate( "/REIJI([0-9]+).*\\.DIC",       R.string.dicname_reijiro,       false),
+		new DicTemplate( "/RYAKU([0-9]+).*\\.DIC",       R.string.dicname_ryakujiro,     false),
 	};
-
-	private final static int DICNAME_RESOURCE[] = {
-		R.string.dicname_eijiro,
-		R.string.dicname_waeijiro,
-		R.string.dicname_reijiro,
-		R.string.dicname_ryakujiro,
-	};
-
-	private final static  boolean ENGLISH_FLAG[] = {
-		true ,
-		false,
-		false,
-		false,
-	};
-
 
 
 	private PreferenceScreen mPs = null;
 	private PreferenceManager mPm = getPreferenceManager();
 	private Idice mDice = null;
 	private final static int REQUEST_CODE_ADDDIC = 0x1234;
+	private final static int REQUEST_CODE_FONTMANAGER= 0x1235;
 	private final Context mContext = this;
 
 	@Override
@@ -92,6 +97,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		mPm = getPreferenceManager();
 
 		createDictionaryPreference();
+
+
 	}
 
 	@Override
@@ -236,18 +243,6 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		}
 	}
 
-	private final class AddDictionary implements Preference.OnPreferenceClickListener {
-		@Override
-		public boolean onPreferenceClick(Preference preference) {
-			// ファイル選択画面呼び出し
-			Intent intent = new Intent();
-			intent.setClassName("jp.sblo.pandora.adice", "jp.sblo.pandora.adice.FileSelectorActivity");
-			intent.putExtra(FileSelectorActivity.INTENT_EXTENSION, new String[] { ".dic" });
-			startActivityForResult(intent, REQUEST_CODE_ADDDIC);
-
-			return true;
-		}
-	}
 
 	private void createDictionaryPreference() {
 		// 新規PreferenceScreen
@@ -308,7 +303,19 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 					prAdddic.setTitle(R.string.adddictionarytitle);
 					catdic.addPreference(prAdddic);
 
-					prAdddic.setOnPreferenceClickListener(new AddDictionary());
+					prAdddic.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+						@Override
+						public boolean onPreferenceClick(Preference preference)
+						{
+							// ファイル選択画面呼び出し
+							Intent intent = new Intent();
+							intent.setClassName("jp.sblo.pandora.adice", "jp.sblo.pandora.adice.FileSelectorActivity");
+							intent.putExtra(FileSelectorActivity.INTENT_EXTENSION, new String[] { ".dic" });
+							startActivityForResult(intent, REQUEST_CODE_ADDDIC);
+
+							return true;
+						}
+					});
 				}
 			}
 
@@ -400,16 +407,6 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 
 						psdic.addPreference(pr);
 					}
-					{
-						// タイ語辞書
-						final CheckBoxPreference pr = new CheckBoxPreference(this);
-						pr.setKey(name + KEY_THAI);
-						pr.setTitle(R.string.thaialphabet);
-						pr.setSummaryOn(R.string.thaisummaryon);
-						pr.setSummaryOff(R.string.thaisummaryoff);
-
-						psdic.addPreference(pr);
-					}
 //					{
 //						// アクセント記号無視
 //						final CheckBoxPreference pr = new CheckBoxPreference(this);
@@ -488,46 +485,74 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 			{
 				// インデックスフォントサイズ
 				final ListPreference pr = new ListPreference(this);
-				pr.setKey(KEY_INDEXFONTSIZE);
+				pr.setKey(KEY_INDEXFONTSIZE_DEF);
 				pr.setSummary(pr.getValue());
 				pr.setTitle(R.string.fontsizeindex);
 				pr.setEntries(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setEntryValues(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setOnPreferenceChangeListener(this);
-				mPs.addPreference(pr);
+				catfont.addPreference(pr);
 			}
 			{
 				// 本文フォントサイズ
 				final ListPreference pr = new ListPreference(this);
-				pr.setKey(KEY_MEANINGFONTSIZE);
+				pr.setKey(KEY_MEANINGFONTSIZE_DEF);
 				pr.setSummary(pr.getValue());
 				pr.setTitle(R.string.fontsizetrans);
 				pr.setEntries(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setEntryValues(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setOnPreferenceChangeListener(this);
-				mPs.addPreference(pr);
+				catfont.addPreference(pr);
 			}
 			{
 				// 発音記号フォントサイズ
 				final ListPreference pr = new ListPreference(this);
-				pr.setKey(KEY_PHONEFONTSIZE);
+				pr.setKey(KEY_PHONEFONTSIZE_DEF);
 				pr.setSummary(pr.getValue());
 				pr.setTitle(R.string.fontsizephone);
 				pr.setEntries(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setEntryValues(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setOnPreferenceChangeListener(this);
-				mPs.addPreference(pr);
+				catfont.addPreference(pr);
 			}
 			{
 				// サンプルフォントサイズ
 				final ListPreference pr = new ListPreference(this);
-				pr.setKey(KEY_EXAMPLEFONTSIZE);
+				pr.setKey(KEY_EXAMPLEFONTSIZE_DEF);
 				pr.setSummary(pr.getValue());
 				pr.setTitle(R.string.fontsizesample);
 				pr.setEntries(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setEntryValues(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setOnPreferenceChangeListener(this);
-				mPs.addPreference(pr);
+				catfont.addPreference(pr);
+			}
+			if ( Build.VERSION.SDK.compareTo("4") >= 0 ){	//  Donut 以降の機能
+				// フォント管理
+				final Preference pr = new Preference(this);
+				pr.setTitle(R.string.fontmanager);
+				pr.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+					@Override
+					public boolean onPreferenceClick(Preference preference)
+					{
+						// フォント管理画面呼び出し
+						Intent intent = new Intent();
+						intent.setClassName("jp.sblo.pandora.adice", "jp.sblo.pandora.adice.FontManagerActivity");
+						startActivityForResult(intent, REQUEST_CODE_FONTMANAGER);
+
+						return true;
+					}
+				});
+				catfont.addPreference(pr);
+			}
+			{
+				// タイ語辞書
+				final CheckBoxPreference pr = new CheckBoxPreference(this);
+				pr.setKey( KEY_THAI);
+				pr.setTitle(R.string.thaialphabet);
+				pr.setSummaryOn(R.string.thaisummaryon);
+				pr.setSummaryOff(R.string.thaisummaryoff);
+
+				catfont.addPreference(pr);
 			}
 
 		}
@@ -543,6 +568,16 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		return false;
 	}
 
+	private static String selectKey( SharedPreferences sp , String key , String defkey , String defvalue )
+	{
+		String val = sp.getString(  key ,"" );
+		if ( val.length() == 0 ){
+			val = sp.getString(  defkey , defvalue );
+		}
+		return val;
+	}
+
+
 	public static void apllySettings(Context context, IdicInfo dicinfo)
 	{
 		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
@@ -551,19 +586,19 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		String name = dicinfo.GetFilename();
 
 		dicinfo.SetDicName( sp.getString( name + KEY_DICNAME ,"" ) );
-//		dicinfo.SetAccent( sp.getBoolean(name + KEY_ACCENT ,false ) );
-//		dicinfo.SetConjugation( sp.getBoolean(name + KEY_CONJUGATIONSEARCH ,false ) );
 		dicinfo.SetEnglish( sp.getBoolean(name + KEY_ENGLISH ,false ) );
-//		dicinfo.SetIrreg( sp.getBoolean(name + KEY_IRREG ,false ) );
 		dicinfo.SetNotuse( !sp.getBoolean(name + KEY_USE,false ) );
 		dicinfo.SetSearchMax( Integer.parseInt( sp.getString( name + KEY_RESULTNUM ,"5" ) ) );
 
-		dicinfo.SetIndexSize( Integer.parseInt( sp.getString(  KEY_INDEXFONTSIZE ,"20" ) ) );
-		dicinfo.SetPhoneticSize( Integer.parseInt( sp.getString( KEY_PHONEFONTSIZE ,"16" ) ) );
-		dicinfo.SetSampleSize( Integer.parseInt( sp.getString( KEY_EXAMPLEFONTSIZE,"16" ) ) );
-		dicinfo.SetTransSize(Integer.parseInt( sp.getString( KEY_MEANINGFONTSIZE ,"16" ) ) );
+		dicinfo.SetIndexSize( Integer.parseInt( selectKey( sp , name + KEY_INDEXFONTSIZE, KEY_INDEXFONTSIZE_DEF , "20" ) ) );
+		dicinfo.SetPhoneticSize( Integer.parseInt( selectKey( sp , name + KEY_PHONEFONTSIZE, KEY_PHONEFONTSIZE_DEF , "16" ) ) );
+		dicinfo.SetSampleSize( Integer.parseInt( selectKey( sp , name + KEY_EXAMPLEFONTSIZE, KEY_EXAMPLEFONTSIZE_DEF , "16" )) ) ;
+		dicinfo.SetTransSize( Integer.parseInt( selectKey( sp , name + KEY_MEANINGFONTSIZE, KEY_MEANINGFONTSIZE_DEF , "16" )) ) ;
 
-		dicinfo.SetThai( sp.getBoolean( name + KEY_THAI ,false ) );
+		dicinfo.SetIndexFont( sp.getString( name + KEY_INDEXFONT, FontCache.NORMAL )  );
+		dicinfo.SetPhoneticFont( sp.getString( name + KEY_PHONEFONT, FontCache.PHONE )  );
+		dicinfo.SetTransFont( sp.getString( name + KEY_MEANINGFONT, FontCache.NORMAL )  );
+		dicinfo.SetSampleFont( sp.getString( name + KEY_EXAMPLEFONT, FontCache.NORMAL )  );
 	}
 	public static void setDefaultSettings(Context context, IdicInfo dicinfo)
 	{
@@ -576,23 +611,28 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		if ( sp.getString(name +KEY_DICNAME, "").length() == 0 ){
 			final SharedPreferences.Editor editor = sp.edit();
 			editor.putString( name + KEY_DICNAME , "" );
-//			editor.putBoolean(name + KEY_ACCENT ,false ) ;
-//			editor.putBoolean(name + KEY_CONJUGATIONSEARCH ,false ) ;
  			editor.putBoolean(name + KEY_ENGLISH , false ) ;
- 			editor.putBoolean(name + KEY_THAI , false ) ;
-//			editor.putBoolean(name + KEY_IRREG  , false ) ;
 			editor.putBoolean(name + KEY_USE , true );
 			editor.putString( name + KEY_RESULTNUM ,"5"  ) ;
 
+			editor.putString(  name + KEY_INDEXFONTSIZE , "" ) ;
+			editor.putString(  name + KEY_PHONEFONTSIZE , "" ) ;
+			editor.putString(  name + KEY_EXAMPLEFONTSIZE , "" ) ;
+			editor.putString(  name + KEY_MEANINGFONTSIZE , "" ) ;
+			editor.putString(  name + KEY_INDEXFONT , "" ) ;
+			editor.putString(  name + KEY_PHONEFONT , "" ) ;
+			editor.putString(  name + KEY_EXAMPLEFONT , "" ) ;
+			editor.putString(  name + KEY_MEANINGFONT , "" ) ;
+
 			// 辞書名自動判定
-			for( int i=0;i<DICNAME_PATTERN.length ;i++ ){
-				Pattern p = Pattern.compile( DICNAME_PATTERN[i] );
+			for( int i=0;i<DICNTEMPLATE.length ;i++ ){
+				Pattern p = Pattern.compile( DICNTEMPLATE[i].pattern );
 				Matcher m = p.matcher(name);
 				if ( m.find() ){
 					String edt = m.group(1);
-					String dicname = context.getResources().getString(DICNAME_RESOURCE[i] , edt );
+					String dicname = context.getResources().getString(DICNTEMPLATE[i].resourceDicname , edt );
 					editor.putString( name +KEY_DICNAME , dicname	);
-		 			editor.putBoolean(name + KEY_ENGLISH , ENGLISH_FLAG[i] ) ;
+		 			editor.putBoolean(name + KEY_ENGLISH , DICNTEMPLATE[i].englishFlag ) ;
 				}
 			}
 

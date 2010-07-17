@@ -34,11 +34,14 @@ public class DicView extends ListView {
 		public CharSequence Trans;
 		public CharSequence Sample;
 
+		public Typeface IndexFont;
+		public Typeface PhoneFont;
+		public Typeface TransFont;
+		public Typeface SampleFont;
 		public int	IndexSize;
 		public int	PhoneSize;
 		public int	TransSize;
 		public int	SampleSize;
-		public boolean Thai;
 
 		public  Data( int mode , int dic ){
 			mDic = dic;
@@ -61,10 +64,6 @@ public class DicView extends ListView {
 	}
 
 	private Callback mCallback;
-	static	Typeface mFontPhone=null;
-	static	Typeface mFontThai=null;
-	static	Typeface mFontNormal=null;
-
 
 	private void init(Context context)
 	{
@@ -85,15 +84,7 @@ public class DicView extends ListView {
 				}
 			}
 		});
-		if ( mFontNormal == null ){
-			mFontNormal = Typeface.defaultFromStyle(Typeface.NORMAL);
-		}
-		if ( mFontPhone == null ){
-			mFontPhone = Typeface.createFromAsset(context.getAssets(), "DoulosSILR.ttf");
-		}
-		if ( mFontThai == null ){
-			mFontThai = Typeface.createFromAsset(context.getAssets(), "DroidSansThai.ttf");
-		}
+
 	}
 
 	public DicView(Context context) {
@@ -148,8 +139,6 @@ public class DicView extends ListView {
 		{
 			super(context, resource, textViewResourceId, objects);
 			margine_bottom = (int)context.getResources().getDimension(R.dimen.list_margine_bottom);
-
-
 		}
 
 		@Override
@@ -186,30 +175,19 @@ public class DicView extends ListView {
 				holder.Sample.setTextColor(Color.BLACK);
 				holder.BarHr.setBackgroundColor(Color.BLACK);
 
-				holder.Phone.setTypeface(mFontPhone);
 				view.setTag(holder);
 			}
 			Data d = getItem(position);
 
-			holder.Index.setTypeface(mFontNormal);
-			holder.Trans.setTypeface(mFontNormal);
-			holder.Sample.setTypeface(mFontNormal);
-
 			switch( d.getMode() ){
 			case Data.WORD:
-				setItem( holder.Index ,d.Index , d.IndexSize );
-				setItem( holder.Phone ,d.Phone , d.PhoneSize);
-				setItem( holder.Trans ,d.Trans , d.TransSize);
-				setItem( holder.Sample ,d.Sample ,d.SampleSize);
+				setItem( holder.Index ,d.Index , d.IndexFont ,d.IndexSize );
+				setItem( holder.Phone ,d.Phone , d.PhoneFont ,d.PhoneSize);
+				setItem( holder.Trans ,d.Trans , d.TransFont ,d.TransSize);
+				setItem( holder.Sample ,d.Sample ,d.SampleFont ,d.SampleSize);
 				holder.moreButton.setVisibility(View.GONE);
 				holder.BarHr.setVisibility(View.GONE);
 				view.setPadding(0, 0, 0, margine_bottom);
-
-				if ( d.Thai ){
-					holder.Index.setTypeface(mFontThai);
-					holder.Trans.setTypeface(mFontThai);
-					holder.Sample.setTypeface(mFontThai);
-				}
 
 				break;
 			case Data.MORE:
@@ -224,7 +202,7 @@ public class DicView extends ListView {
 				break;
 			case Data.NORESULT:
 			case Data.NONE:
-				setItem( holder.Index ,d.Index , 16);
+				setItem( holder.Index ,d.Index , d.IndexFont ,16);
 				holder.Phone.setVisibility(View.GONE);
 				holder.Trans.setVisibility(View.GONE);
 				holder.Sample.setVisibility(View.GONE);
@@ -233,7 +211,7 @@ public class DicView extends ListView {
 				view.setPadding(0, 0, 0, 0);
 				break;
 			case Data.FOOTER:
-				setItem( holder.Index ,d.Index , 16);
+				setItem( holder.Index ,d.Index , d.IndexFont ,16);
 				holder.Phone.setVisibility(View.GONE);
 				holder.Trans.setVisibility(View.GONE);
 				holder.Sample.setVisibility(View.GONE);
@@ -254,7 +232,7 @@ public class DicView extends ListView {
 			return view;
 		}
 
-		private void setItem( TextView tv , CharSequence str, int size )
+		private void setItem( TextView tv , CharSequence str, Typeface tf , int size )
 		{
 			if (str ==null || str.length()==0 ){
 				tv.setVisibility(View.GONE);
@@ -262,6 +240,7 @@ public class DicView extends ListView {
 				tv.setVisibility(View.VISIBLE);
 				tv.setText(str);
 				tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, size );
+				tv.setTypeface( tf );
 			}
 		}
 	}

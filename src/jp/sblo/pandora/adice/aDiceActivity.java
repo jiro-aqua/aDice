@@ -27,6 +27,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -49,14 +50,16 @@ public class aDiceActivity extends Activity implements DicView.Callback
 {
 
 	private final static String TAG = "aDice";
-	private DicView mDicView;
-	private DicEditText mEdittext;
 	private static String mLast = "";
 	private static Thread mDiceThread = null;
-	private Idice mDice;
+
+	private final Idice mDice = DiceFactory.getInstance();;
 	private final Context mContext = this;
-	private HashMap<String, String> mIrreg = null;
+	private final HashMap<String, String> mIrreg = new HashMap<String, String>();
+
 	private int mDelay = 0;
+	private DicView mDicView;
+	private DicEditText mEdittext;
 
 	private static String mMorebutton;
 	private static String mNoResult;
@@ -78,13 +81,16 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	private static int LONG_PRESS_DELAY = 500;// msec
 	private Handler mHandler = new Handler();
 	private boolean registLongPress = false;
-	final private Runnable mLongPressAction = new Runnable() {
+	private final Runnable mLongPressAction = new Runnable() {
 		@Override
 		public void run()
 		{
 			finish();
 		}
 	};
+	private final FontCache mFontCache = FontCache.getInstance();
+	private Typeface mNormalFont ;
+	private Typeface mThaiFont ;
 
 
 	/** Called when the activity is first created. */
@@ -93,7 +99,11 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	{
 		super.onCreate(savedInstanceState);
 
-		mDice = DiceFactory.getInstance();
+		// fontロード
+		mNormalFont = Typeface.defaultFromStyle(Typeface.NORMAL);
+		mThaiFont = Typeface.createFromAsset( getAssets(), "DroidSansThai.ttf");
+		mFontCache.put(FontCache.NORMAL , mNormalFont  );
+		mFontCache.put(FontCache.PHONE , Typeface.createFromAsset( getAssets(), "DoulosSILR.ttf") );
 
 		// プログレスダイアログを表示
 		final ProgressDialog dialog = new ProgressDialog(this);
@@ -228,48 +238,50 @@ public class aDiceActivity extends Activity implements DicView.Callback
 
 	private void initDice()
 	{
-		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		synchronized( this ){
+			final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 
-		final String key = SettingsActivity.KEY_DICS;
-		// Log.i(TAG,key );
-		final String dicss = sp.getString(key, "");
-		final String[] dics = dicss.split("\\|");
+			final String key = SettingsActivity.KEY_DICS;
+			// Log.i(TAG,key );
+			final String dicss = sp.getString(key, "");
+			final String[] dics = dicss.split("\\|");
 
-		// 外部辞書読込
-		for (String name : dics) {
-			if (name.length() == 0) {
-				continue;
-			}
-			final IdicInfo dicinfo = mDice.open(name);
-			if (dicinfo != null) {
-				Log.i(TAG, "Open OK:" + name);
-
-				// インデクスキャッシュファイル名取得
-				final String filename = name.replace("/", ".") + ".idx";
-
-				// インデクス作成
-				if (!dicinfo.readIndexBlock(new IIndexCacheFile() {
-					final String path = getCacheDir() + "/" + filename;
-
-					@Override
-					public FileInputStream getInput() throws FileNotFoundException
-					{
-						return new FileInputStream(path);
-					}
-
-					@Override
-					public FileOutputStream getOutput() throws FileNotFoundException
-					{
-						return new FileOutputStream(path);
-					}
-
-				})) {
-					mDice.close(dicinfo);
-				} else {
-					SettingsActivity.apllySettings(this, dicinfo);
+			// 外部辞書読込
+			for (String name : dics) {
+				if (name.length() == 0) {
+					continue;
 				}
-			} else {
-				Log.i(TAG, "Open NG:" + name);
+				final IdicInfo dicinfo = mDice.open(name);
+				if (dicinfo != null) {
+					Log.i(TAG, "Open OK:" + name);
+
+					// インデクスキャッシュファイル名取得
+					final String filename = name.replace("/", ".") + ".idx";
+
+					// インデクス作成
+					if (!dicinfo.readIndexBlock(new IIndexCacheFile() {
+						final String path = getCacheDir() + "/" + filename;
+
+						@Override
+						public FileInputStream getInput() throws FileNotFoundException
+						{
+							return new FileInputStream(path);
+						}
+
+						@Override
+						public FileOutputStream getOutput() throws FileNotFoundException
+						{
+							return new FileOutputStream(path);
+						}
+
+					})) {
+						mDice.close(dicinfo);
+					} else {
+						SettingsActivity.apllySettings(this, dicinfo);
+					}
+				} else {
+					Log.i(TAG, "Open NG:" + name);
+				}
 			}
 		}
 	}
@@ -277,122 +289,119 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	// 英語向けIRREG読込
 	private HashMap<String, String> loadIrreg()
 	{
+		final String name = "IrregDic.txt";
 
-		if (mIrreg == null) {
+		try {
 
-			final String name = "IrregDic.txt";
-			mIrreg = new HashMap<String, String>();
+			BufferedReader in = new BufferedReader(new InputStreamReader(getAssets().open(name)));
 
-			try {
-
-				BufferedReader in = new BufferedReader(new InputStreamReader(getAssets().open(name)));
-
-				String str;
-				while ((str = in.readLine()) != null) {
-					int s = str.indexOf('\t');
-					if (s != -1) {
-						String s0 = str.substring(0, s);
-						String s1 = str.substring(s + 1);
-						mIrreg.put(s0, s1);
-					}
+			String str;
+			while ((str = in.readLine()) != null) {
+				int s = str.indexOf('\t');
+				if (s != -1) {
+					String s0 = str.substring(0, s);
+					String s1 = str.substring(s + 1);
+					mIrreg.put(s0, s1);
 				}
-				in.close();
-				Log.i(TAG, "Open OK:" + name);
-				mDice.setIrreg(mIrreg);
-			} catch (FileNotFoundException e) {
-				Log.i(TAG, "Open NG:" + name);
-			} catch (IOException e) {
-				Log.i(TAG, "Open NG:" + name);
 			}
+			in.close();
+			Log.i(TAG, "Open OK:" + name);
+			mDice.setIrreg(mIrreg);
+		} catch (FileNotFoundException e) {
+			Log.i(TAG, "Open NG:" + name);
+		} catch (IOException e) {
+			Log.i(TAG, "Open NG:" + name);
 		}
 		return mIrreg;
 	}
 
 	private void search(final String text, final int timer)
 	{
-		// Log.i("search ", text);
+		synchronized( this ){
+			// Log.i("search ", text);
 
-		if (mDiceThread != null) {
-			// Log.i("search ", "int");
-			mDiceThread.interrupt();
-			try {
-				// Log.i("search ", "join");
-				mDiceThread.join();
-				// Log.i("search ", "joined");
-			} catch (InterruptedException e) {
-			}
-			mDiceThread = null;
-		}
-
-		mDiceThread = new Thread() {
-			public void run()
-			{
-				// Log.i("search thread ", "start");
-				searchProc(text, timer);
-				// Log.i("search thread ", "end");
-			}
-
-			private void searchProc(String text, int timer)
-			{
-
-				final ArrayList<DicView.Data> result = new ArrayList<DicView.Data>();
+			if (mDiceThread != null) {
+				// Log.i("search ", "int");
+				mDiceThread.interrupt();
 				try {
-					// Log.i("search thread ", "sleeping...");
-					sleep(timer);
-					// Log.i("search thread ", "got up");
-					int dicnum = mDice.getDicNum();
-					for (int dic = 0; dic < dicnum; dic++) {
-						if (interrupted())
-							return;
-
-						if (!mDice.isEnable(dic)) {
-							continue;
-						}
-
-						if (interrupted())
-							return;
-
-						mDice.search(dic, text);
-
-						IdicResult pr = mDice.getResult(dic);
-
-						if (interrupted())
-							return;
-						if (pr.getCount() > 0) {
-							generateDisp(DISP_MODE_RESULT, dic, pr, result, -1);
-							generateDisp(DISP_MODE_FOOTER, dic, null, result, -1);
-						}
-
-						if (interrupted())
-							return;
-					}
-
-					if (result.size() == 0) {
-						generateDisp(DISP_MODE_NORESULT, -1, null, result, -1);
-					}
-					if (!interrupted()) {
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run()
-							{
-								// TODO:
-								mResultData.clear();
-								for (DicView.Data d : result) {
-									mResultData.add(d);
-								}
-								mAdapter.notifyDataSetChanged();
-								mDicView.setSelectionFromTop(0, 0);
-							}
-						});
-					}
-
+					// Log.i("search ", "join");
+					mDiceThread.join();
+					// Log.i("search ", "joined");
 				} catch (InterruptedException e) {
-					// Log.i("search Thread ", "interrupted.");
+				}
+				mDiceThread = null;
+			}
+
+			mDiceThread = new Thread() {
+				public void run()
+				{
+					// Log.i("search thread ", "start");
+					searchProc(text, timer);
+					// Log.i("search thread ", "end");
 				}
 
-			}
-		};
-		mDiceThread.start();
+				private void searchProc(String text, int timer)
+				{
+
+					final ArrayList<DicView.Data> result = new ArrayList<DicView.Data>();
+					try {
+						// Log.i("search thread ", "sleeping...");
+						sleep(timer);
+						// Log.i("search thread ", "got up");
+						int dicnum = mDice.getDicNum();
+						for (int dic = 0; dic < dicnum; dic++) {
+							if (interrupted())
+								return;
+
+							if (!mDice.isEnable(dic)) {
+								continue;
+							}
+
+							if (interrupted())
+								return;
+
+							mDice.search(dic, text);
+
+							IdicResult pr = mDice.getResult(dic);
+
+							if (interrupted())
+								return;
+							if (pr.getCount() > 0) {
+								generateDisp(DISP_MODE_RESULT, dic, pr, result, -1);
+								generateDisp(DISP_MODE_FOOTER, dic, null, result, -1);
+							}
+
+							if (interrupted())
+								return;
+						}
+
+						if (result.size() == 0) {
+							generateDisp(DISP_MODE_NORESULT, -1, null, result, -1);
+						}
+						if (!interrupted()) {
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run()
+								{
+									// TODO:
+									mResultData.clear();
+									for (DicView.Data d : result) {
+										mResultData.add(d);
+									}
+									mAdapter.notifyDataSetChanged();
+									mDicView.setSelectionFromTop(0, 0);
+								}
+							});
+						}
+
+					} catch (InterruptedException e) {
+						// Log.i("search Thread ", "interrupted.");
+					}
+
+				}
+			};
+			mDiceThread.start();
+		}
 	}
 
 	@Override
@@ -432,6 +441,12 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	}
 
 	@Override
+	protected void onPause()
+	{
+		super.onPause();
+	}
+
+	@Override
 	protected void onResume()
 	{
 		super.onResume();
@@ -446,6 +461,14 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		}
 		mFastScroll = sp.getBoolean(SettingsActivity.KEY_FASTSCROLL, false);
 		mDicView.setFastScrollEnabled(mFastScroll);
+
+		// タイ語フォントの適用
+		if (  sp.getBoolean( SettingsActivity.KEY_THAI , false ) ){
+			mFontCache.put(FontCache.NORMAL , mThaiFont  );
+		}else{
+			mFontCache.put(FontCache.NORMAL , mNormalFont  );
+		}
+		mEdittext.setTypeface(mFontCache.get(FontCache.NORMAL));
 
 		// intentからのデータ取得
 		Intent it = getIntent();
@@ -472,8 +495,10 @@ public class aDiceActivity extends Activity implements DicView.Callback
 			}
 			mEdittext.setText(text);
 			mEdittext.setSelection(0, text.length());
+		}else{
+			text = mEdittext.getEditableText().toString();
+			searchWord(text);
 		}
-
 	}
 
 	/**
@@ -556,89 +581,96 @@ public class aDiceActivity extends Activity implements DicView.Callback
 
 	private void generateDisp(int mode, int dic, IdicResult pr, ArrayList<DicView.Data> result, int pos)
 	{
-		switch (mode) {
-		case DISP_MODE_RESULT: {
-			// 表示させる内容を生成
-			for (int i = 0; i < pr.getCount(); i++) {
-				DicView.Data data = new DicView.Data(DicView.Data.WORD, dic);
+		synchronized( this ){
+			switch (mode) {
+			case DISP_MODE_RESULT: {
+				// 表示させる内容を生成
+				for (int i = 0; i < pr.getCount(); i++) {
+					DicView.Data data = new DicView.Data(DicView.Data.WORD, dic);
 
-				String idx = pr.getDisp(i);
-				data.Index = idx;
-				if (idx == null || idx.length() == 0) {
-					data.Index = pr.getIndex(i);
+					String idx = pr.getDisp(i);
+					data.Index = idx;
+					if (idx == null || idx.length() == 0) {
+						data.Index = pr.getIndex(i);
+					}
+
+					data.Phone = pr.getPhone(i);
+					data.Trans = pr.getTrans(i);
+					data.Sample = pr.getSample(i);
+
+					IdicInfo info = mDice.getDicInfo(dic);
+					data.IndexSize = info.GetIndexSize();
+					data.PhoneSize = info.GetPhoneticSize();
+					data.TransSize = info.GetTransSize();
+					data.SampleSize = info.GetSampleSize();
+
+					data.PhoneFont = mFontCache.get( FontCache.PHONE );
+					data.IndexFont = mFontCache.get( FontCache.NORMAL );
+					data.TransFont = mFontCache.get( FontCache.NORMAL );
+					data.SampleFont = mFontCache.get( FontCache.NORMAL );
+
+					if (pos == -1) {
+						result.add(data);
+					} else {
+						result.add(pos++, data);
+					}
 				}
 
-				data.Phone = pr.getPhone(i);
-				data.Trans = pr.getTrans(i);
-				data.Sample = pr.getSample(i);
+				// 結果がまだあるようならmoreボタンを表示
+				if (mDice.hasMoreResult(dic)) {
+					DicView.Data data = new DicView.Data(DicView.Data.MORE, dic);
 
-				IdicInfo info = mDice.getDicInfo(dic);
-				data.IndexSize = info.GetIndexSize();
-				data.PhoneSize = info.GetPhoneticSize();
-				data.TransSize = info.GetTransSize();
-				data.SampleSize = info.GetSampleSize();
-				data.Thai = info.GetThai();
+					data.Index = mMorebutton;
+
+					if (pos == -1) {
+						result.add(data);
+					} else {
+						result.add(pos++, data);
+					}
+				}
+				break;
+			}
+			case DISP_MODE_FOOTER: {
+				String dicname = mDice.getDicInfo(dic).GetDicName();
+				if (dicname == null || dicname.length() == 0) {
+					dicname = mDice.getDicInfo(dic).GetFilename();
+				}
+				DicView.Data data = new DicView.Data(DicView.Data.FOOTER, dic);
+
+				data.Index = String.format(mFooter, dicname);
 				if (pos == -1) {
 					result.add(data);
 				} else {
 					result.add(pos++, data);
 				}
+				break;
 			}
-
-			// 結果がまだあるようならmoreボタンを表示
-			if (mDice.hasMoreResult(dic)) {
-				DicView.Data data = new DicView.Data(DicView.Data.MORE, dic);
-
-				data.Index = mMorebutton;
-
-				if (pos == -1) {
-					result.add(data);
-				} else {
-					result.add(pos++, data);
-				}
-			}
-			break;
-		}
-		case DISP_MODE_FOOTER: {
-			String dicname = mDice.getDicInfo(dic).GetDicName();
-			if (dicname == null || dicname.length() == 0) {
-				dicname = mDice.getDicInfo(dic).GetFilename();
-			}
-			DicView.Data data = new DicView.Data(DicView.Data.FOOTER, dic);
-
-			data.Index = String.format(mFooter, dicname);
-			if (pos == -1) {
+			case DISP_MODE_NORESULT: {
+				DicView.Data data = new DicView.Data(DicView.Data.NONE, 0);
+				data.Index = mNoResult;
 				result.add(data);
-			} else {
-				result.add(pos++, data);
+				break;
 			}
-			break;
-		}
-		case DISP_MODE_NORESULT: {
-			DicView.Data data = new DicView.Data(DicView.Data.NONE, 0);
-			data.Index = mNoResult;
-			result.add(data);
-			break;
-		}
-		case DISP_MODE_START: {
-			String versionName = "-.-";
-			int versionCode = 0;
-			PackageManager pm = getPackageManager();
-			try {
-				PackageInfo info = null;
-				info = pm.getPackageInfo("jp.sblo.pandora.adice", 0);
-				versionName = info.versionName;
-				versionCode = info.versionCode;
-			} catch (NameNotFoundException e) {
-			}
-			String version = "Ver. " + String.format("%s (%d)", versionName, versionCode);
-			String description = getResources().getString(R.string.description);
+			case DISP_MODE_START: {
+				String versionName = "-.-";
+				int versionCode = 0;
+				PackageManager pm = getPackageManager();
+				try {
+					PackageInfo info = null;
+					info = pm.getPackageInfo("jp.sblo.pandora.adice", 0);
+					versionName = info.versionName;
+					versionCode = info.versionCode;
+				} catch (NameNotFoundException e) {
+				}
+				String version = "Ver. " + String.format("%s (%d)", versionName, versionCode);
+				String description = getResources().getString(R.string.description);
 
-			DicView.Data data = new DicView.Data(DicView.Data.NONE, 0);
-			data.Index = Html.fromHtml(mStartPage.replace("$version$", version).replace("$description$", description));
-			result.add(data);
-			break;
-		}
+				DicView.Data data = new DicView.Data(DicView.Data.NONE, 0);
+				data.Index = Html.fromHtml(mStartPage.replace("$version$", version).replace("$description$", description));
+				result.add(data);
+				break;
+			}
+			}
 		}
 	}
 
@@ -704,5 +736,6 @@ public class aDiceActivity extends Activity implements DicView.Callback
 			search(cs.toString(), 10);
 		}
 	}
+
 
 }
