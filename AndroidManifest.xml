@@ -10,21 +10,22 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.SEND" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="text/plain" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="jp.sblo.pandora.adice.action.SEARCH" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="text/plain" />
+			</intent-filter>
 		</activity>
 		<activity android:name=".SettingsActivity" android:label="@string/setting_name">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-			</intent-filter>
 		</activity>
 		<activity android:name=".AboutActivity" android:label="@string/about_name">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-			</intent-filter>
 		</activity>
 		<activity android:name=".FileSelectorActivity" android:label="@string/fileselector_name">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-			</intent-filter>
 		</activity>
 
 	</application>

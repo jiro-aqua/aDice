@@ -64,5 +64,8 @@
 <string name="dicname_ryakujiro">略語郎 %s版</string>
 <string name="crash_report">クラッシュレポート</string>
 <string name="crash_report_text">"前回強制終了時のログが残っています。\nスタックトレースログを開発者に送信しますか？"</string>
+<string name="clipboardsearch">クリップボード検索</string>
+<string name="clipboardsearchsummaryon">クリップボード検索有効</string>
+<string name="clipboardsearchsummaryoff">クリップボード検索無効</string>
 
 </resources>

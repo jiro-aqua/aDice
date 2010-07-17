@@ -66,4 +66,9 @@
 <string name="crash_report">Crash Report</string>
 <string name="crash_report_text">Do you send a stacktrace log to the developer?</string>
 
+<string name="clipboardsearch">Clipboard Search</string>
+<string name="clipboardsearchsummaryon">Clipboard Search is enable</string>
+<string name="clipboardsearchsummaryoff">Clipboard Search is desable</string>
+
+
 </resources>

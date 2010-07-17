@@ -52,6 +52,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	public static final String KEY_MOVE_DOWN = "|MoveDown";
 	public static final String KEY_THAI = "|thai";
 	public static final String KEY_FASTSCROLL = "fastscroll";
+	public static final String KEY_CLIPBOARD_SEARCH = "clipboardsearch";
 
 	private final static String DICNAME_PATTERN[]={
 		"/EIJI-([0-9]+).*\\.DIC",
@@ -278,6 +279,15 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 					pr.setTitle(R.string.fastscroll);
 					pr.setSummaryOn(R.string.fastscrollsummaryon);
 					pr.setSummaryOff(R.string.fastscrollsummaryoff);
+					catdic.addPreference(pr);
+				}
+				{
+					// クリップボード検索
+					final CheckBoxPreference pr = new CheckBoxPreference(this);
+					pr.setKey(KEY_CLIPBOARD_SEARCH);
+					pr.setTitle(R.string.clipboardsearch);
+					pr.setSummaryOn(R.string.clipboardsearchsummaryon);
+					pr.setSummaryOff(R.string.clipboardsearchsummaryoff);
 					catdic.addPreference(pr);
 				}
 //				{
