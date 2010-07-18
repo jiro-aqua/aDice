@@ -30,7 +30,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 
 public class AndroidExceptionHandler implements UncaughtExceptionHandler {

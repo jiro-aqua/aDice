@@ -59,6 +59,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	public static final String KEY_PHONEFONTSIZE = "|Phonefontsize";
 	public static final String KEY_MEANINGFONTSIZE = "|Meaningfontsize";
 	public static final String KEY_INDEXFONTSIZE = "|indexfontsize";
+	public static final String KEY_FONTS = "fontslist";
 
 
 	static class DicTemplate {
@@ -179,6 +180,21 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		        }.start();
 				return;
 			}
+		}
+		if (requestCode == REQUEST_CODE_FONTMANAGER && resultCode == RESULT_OK ) {
+			// preferenceに登録
+			final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+			SharedPreferences.Editor editor = sp.edit();
+
+			String[] fonts = FontCache.getInstance().getFileList();
+			StringBuilder  fontlist = new StringBuilder();
+			for( String font : fonts ){
+				fontlist.append(font);
+				fontlist.append('|');
+			}
+			fontlist.deleteCharAt(fontlist.length()-1);
+			editor.putString(KEY_FONTS, fontlist.toString() );
+			editor.commit();
 		}
 	}
 

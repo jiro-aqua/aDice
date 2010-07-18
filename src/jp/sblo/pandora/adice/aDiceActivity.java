@@ -1,6 +1,7 @@
 package jp.sblo.pandora.adice;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -91,7 +92,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	private final FontCache mFontCache = FontCache.getInstance();
 	private Typeface mNormalFont ;
 	private Typeface mThaiFont ;
-
+	private boolean mInitialized = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -104,6 +105,17 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		mThaiFont = Typeface.createFromAsset( getAssets(), "DroidSansThai.ttf");
 		mFontCache.put(FontCache.NORMAL , mNormalFont  );
 		mFontCache.put(FontCache.PHONE , Typeface.createFromAsset( getAssets(), "DoulosSILR.ttf") );
+
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		String[] fontlist = sp.getString( SettingsActivity.KEY_FONTS , "").split("\\|");
+
+		for( String font : fontlist ){
+			if ( font.length() == 0 )
+				continue;
+			File f = new File( font );
+			Typeface tf = FontManagerActivity.createTypefaceFromFile( f );
+			mFontCache.put(font, tf);
+		}
 
 		// プログレスダイアログを表示
 		final ProgressDialog dialog = new ProgressDialog(this);
@@ -159,17 +171,19 @@ public class aDiceActivity extends Activity implements DicView.Callback
 			public void onTextChanged(CharSequence charsequence, int i, int j, int k)
 			{
 
-				String text = DiceFactory.convert(charsequence);
+				if (mInitialized){
+					String text = DiceFactory.convert(charsequence);
 
-				if (text.length() > 0 && !mLast.equals(text)) {
-					int timer = mDelay;
-					mLast = text;
-					if (mLast.charAt(mLast.length() - 1) != text.charAt(text.length() - 1)) {
-						timer = 10;
-						// トリムした後の文字列と、末尾の文字が違っていたら即検索かける
+					if (text.length() > 0 && !mLast.equals(text)) {
+						int timer = mDelay;
+						mLast = text;
+						if (mLast.charAt(mLast.length() - 1) != text.charAt(text.length() - 1)) {
+							timer = 10;
+							// トリムした後の文字列と、末尾の文字が違っていたら即検索かける
+						}
+
+						search(text, timer);
 					}
-
-					search(text, timer);
 				}
 			}
 		});
@@ -202,11 +216,12 @@ public class aDiceActivity extends Activity implements DicView.Callback
 			@Override
 			public void run()
 			{
-				try {
-					sleep(100);
+//				try {
+//					sleep(100);
 					loadIrreg();
 					initDice();
 					Log.i(TAG, "aDice Initiliezed");
+					mInitialized = true;
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run()
@@ -223,8 +238,8 @@ public class aDiceActivity extends Activity implements DicView.Callback
 
 						}
 					});
-				} catch (InterruptedException e) {
-				}
+//				} catch (InterruptedException e) {
+//				}
 			}
 		}.start();
 		generateDisp(DISP_MODE_START, 0, null, mResultData, -1);

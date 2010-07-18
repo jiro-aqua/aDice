@@ -1,9 +1,8 @@
 package jp.sblo.pandora.adice;
 
 import java.util.ArrayList;
+import java.io.File;
 import java.util.List;
-
-import jp.sblo.pandora.adice.DicView.ResultAdapter.ViewHolder;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,6 +24,9 @@ public class FontManagerActivity extends ListActivity
 {
     private int REQUEST_CODE_GETFONT = 0x1236;
 	FontCache mFontCache = FontCache.getInstance();
+	private ArrayList<FontCache.fontName> mFontList;
+	private FontAdapter mFontAdapter = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -32,10 +34,9 @@ public class FontManagerActivity extends ListActivity
 
 		setContentView(R.layout.fontmanager);
 
-		final ArrayList<String> fontlist = mFontCache.getList();
-		fontlist.add( "" );
+		setResult(RESULT_OK);
 
-		setListAdapter( new FontAdapter(this,R.layout.fontlist_row , R.id.fontname01,fontlist) );
+		loadList();
 
 		final Activity thisAct = this;
 		ListView lv = getListView();
@@ -43,21 +44,27 @@ public class FontManagerActivity extends ListActivity
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id)
 			{
-				if ( position < fontlist.size()-1 ){
+				final String fontname = mFontList.get(position).fontname;
+				final String filename = mFontList.get(position).filename;
+				if ( position < mFontList.size()-1 ){
 					new AlertDialog.Builder(thisAct)
 					.setIcon(R.drawable.icon)
 					.setTitle("Remove font")
-					.setMessage("Do you remove the font ?\n" + fontlist.get(position) )
+					.setMessage("Do you remove the font ?\n" + fontname )
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int whichButton) {
 					        // YESの処理
 							new AlertDialog.Builder(thisAct)
 							.setTitle("Remove font")
-							.setMessage(fontlist.get(position)+" is removed.")
+							.setMessage(fontname + " is removed.")
 							.setPositiveButton(R.string.label_ok, null)
 							.show();
+
+							mFontCache.remove(filename);
+							loadList();
 					    }
+
 					})
 					.setNegativeButton("No", new DialogInterface.OnClickListener() {
 					    public void onClick(DialogInterface dialog, int whichButton) {
@@ -73,7 +80,7 @@ public class FontManagerActivity extends ListActivity
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 			{
-				if ( position == fontlist.size()-1 ){
+				if ( position == mFontList.size()-1 ){
 					// ファイル選択画面呼び出し
 					Intent intent = new Intent();
 					intent.setClassName("jp.sblo.pandora.adice", "jp.sblo.pandora.adice.FileSelectorActivity");
@@ -83,20 +90,38 @@ public class FontManagerActivity extends ListActivity
 			}
 		});
 
-
 	}
 
+
+	private void loadList(){
+		mFontList = mFontCache.getList();
+
+		mFontList.add( new FontCache.fontName("","") );
+
+		mFontAdapter = new FontAdapter(this,R.layout.fontlist_row , R.id.fontname01 , mFontList);
+		setListAdapter( mFontAdapter );
+	}
+
+	public static Typeface createTypefaceFromFile( File f ){
+		if ( f.exists() ){
+			return Typeface.createFromFile( f );
+		}
+		return null;
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		// 辞書選択画面からの応答
 		if (requestCode == REQUEST_CODE_GETFONT && resultCode == RESULT_OK && data != null) {
-			final String dicname = data.getExtras().getString(FileSelectorActivity.INTENT_FILEPATH);
+			final String fontname = data.getExtras().getString(FileSelectorActivity.INTENT_FILEPATH);
 
-			Typeface tf = Typeface.createFromFile( dicname );
-
-
+			File file = new File( fontname );
+			if ( file.exists() ){
+				Typeface tf = Typeface.createFromFile( fontname );
+				mFontCache.put( fontname , tf );
+				loadList();
+			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -104,14 +129,15 @@ public class FontManagerActivity extends ListActivity
 
 
 
-	private class FontAdapter extends ArrayAdapter<String>
+	private class FontAdapter extends ArrayAdapter<FontCache.fontName>
 	{
 		private class ViewHolder {
 			TextView fontname;
+			TextView filename;
 			TextView sample;
 		}
 
-		public FontAdapter(Context context, int resource, int textViewResourceId, List<String> objects)
+		public FontAdapter(Context context, int resource, int textViewResourceId, List<FontCache.fontName> objects)
 		{
 			super(context, resource, textViewResourceId, objects);
 		}
@@ -128,16 +154,18 @@ public class FontManagerActivity extends ListActivity
 				holder = new ViewHolder();
 
 				holder.fontname = (TextView)view.findViewById(R.id.fontname01);
+				holder.filename = (TextView)view.findViewById(R.id.fontname02);
 				holder.sample = (TextView)view.findViewById(R.id.fontsample);
 
 				view.setTag( holder );
 			}
-			String item = getItem(position);
+			FontCache.fontName item = getItem(position);
 
-			if ( item.length() > 0 ){
-				holder.fontname.setText(item);
-				holder.sample.setText( mFontCache.getSampleString(item) );
-				holder.sample.setTypeface(mFontCache.get(item));
+			if ( item.fontname.length() > 0 ){
+				holder.fontname.setText(item.fontname);
+				holder.filename.setText(item.filename);
+				holder.sample.setText( mFontCache.getSampleString(item.filename) );
+				holder.sample.setTypeface(mFontCache.get(item.filename));
 			}else{
 				holder.fontname.setText(getResources().getString(R.string.addfont));
 				holder.sample.setText( "" );

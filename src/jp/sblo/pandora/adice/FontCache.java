@@ -1,5 +1,6 @@
 package jp.sblo.pandora.adice;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,6 +19,14 @@ public class FontCache
 	static public String	PHONE = "DoulosSILR";
 //	static public String	THAI = "DroidSansThai";
 
+	public static class fontName {
+		String filename;
+		String fontname;
+		public fontName(String f1 , String f2 ){
+			filename = f1;
+			fontname = f2;
+		}
+	}
 
 	static FontCache getInstance() {
 		if ( mInstance == null ){
@@ -33,12 +42,41 @@ public class FontCache
 		}
 	}
 
+	public void remove(String fontname)
+	{
+		if ( !fontname.equals(NORMAL) &&
+			 !fontname.equals(PHONE) ){
+			mFontCache.remove(fontname);
+		}
+	}
+
+
 	public Typeface get(String fontname)
 	{
 		return mFontCache.get(fontname);
 	}
 
-	public ArrayList<String> getList()
+	public ArrayList<fontName> getList()
+	{
+		ArrayList<fontName> ret = new ArrayList<fontName>();
+		Set<Entry<String,Typeface>> sets = mFontCache.entrySet();
+
+		for( Entry<String,Typeface> entry : sets )
+		{
+			String key = entry.getKey();
+			if ( !key.equals(NORMAL) &&
+				!key.equals(PHONE)  )
+			{
+				File f = new File(key);
+				ret.add(new fontName(key ,f.getName() ));
+			}
+		}
+
+		return ret;
+
+	}
+
+	public String[] getFileList()
 	{
 		ArrayList<String> ret = new ArrayList<String>();
 		Set<Entry<String,Typeface>> sets = mFontCache.entrySet();
@@ -46,24 +84,14 @@ public class FontCache
 		for( Entry<String,Typeface> entry : sets )
 		{
 			String key = entry.getKey();
-			if ( !key.equals(NORMAL)  /*&&
-				!key.equals(PHONE) &&
-				!key.equals(THAI )*/ )
+			if ( !key.equals(NORMAL) &&
+				!key.equals(PHONE)  )
 			{
-				ret.add(key);
+				ret.add( key );
 			}
 		}
 
-		Collections.sort( ret , new Comparator<String>(){
-			@Override
-			public int compare(String object1, String object2)
-			{
-				return object2.compareToIgnoreCase(object1);
-			}
-		});
-
-		return ret;
-
+		return ret.toArray(new String[0]);
 	}
 
 	public String getSampleString( String key )

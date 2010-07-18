@@ -3,5 +3,6 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_height="wrap_content" android:layout_width="fill_parent"  android:orientation="vertical">
 	<TextView android:text="" android:id="@+id/fontname01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:textSize="24dp"></TextView>
+	<TextView android:text="" android:id="@+id/fontname02" android:layout_width="fill_parent" android:layout_height="wrap_content" android:textSize="16dp"></TextView>
 	<TextView android:text="" android:id="@+id/fontsample" android:layout_width="fill_parent" android:layout_height="wrap_content" android:textSize="16dp" android:gravity="right"></TextView>
 </LinearLayout>
