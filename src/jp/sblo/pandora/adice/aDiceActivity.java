@@ -107,7 +107,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		mFontCache.put(FontCache.PHONE , Typeface.createFromAsset( getAssets(), "DoulosSILR.ttf") );
 
 		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-		String[] fontlist = sp.getString( SettingsActivity.KEY_FONTS , "").split("\\|");
+		String[] fontlist = sp.getString( FontSettingsActivity.KEY_FONTS , "").split("\\|");
 
 		for( String font : fontlist ){
 			if ( font.length() == 0 )
@@ -619,10 +619,10 @@ public class aDiceActivity extends Activity implements DicView.Callback
 					data.TransSize = info.GetTransSize();
 					data.SampleSize = info.GetSampleSize();
 
-					data.PhoneFont = mFontCache.get( FontCache.PHONE );
-					data.IndexFont = mFontCache.get( FontCache.NORMAL );
-					data.TransFont = mFontCache.get( FontCache.NORMAL );
-					data.SampleFont = mFontCache.get( FontCache.NORMAL );
+					data.IndexFont = mFontCache.get( info.GetIndexFont() );
+					data.PhoneFont = mFontCache.get( info.GetPhoneticFont() );
+					data.TransFont = mFontCache.get( info.GetTransFont() );
+					data.SampleFont = mFontCache.get( info.GetSampleFont() );
 
 					if (pos == -1) {
 						result.add(data);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="jp.sblo.pandora.adice" android:versionCode="10" android:versionName="0.1.7">
+	package="jp.sblo.pandora.adice" android:versionCode="11" android:versionName="0.1.7">
 	<application android:name="aDiceApplication" android:icon="@drawable/icon"
 		android:label="@string/app_name" android:debuggable="true">
 		<activity android:name=".aDiceActivity" android:label="@string/app_name"
@@ -28,6 +28,8 @@
 		<activity android:name=".FileSelectorActivity" android:label="@string/fileselector_name">
 		</activity>
 		<activity android:name=".FontManagerActivity" android:label="@string/fontmanager_name">
+		</activity>
+		<activity android:name=".FontSettingsActivity" android:label="@string/fontsettings_name">
 		</activity>
 
 	</application>

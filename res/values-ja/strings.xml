@@ -54,7 +54,7 @@
 <string name="thaialphabet">タイ語フォント</string>
 <string name="thaisummaryon">タイ語フォントを使用する</string>
 <string name="thaisummaryoff">タイ語フォントを使用しない</string>
-<string name="fontsizettitle">フォントサイズ</string>
+<string name="fonttitle">フォント</string>
 <string name="fastscroll">高速スクロール</string>
 <string name="fastscrollsummaryon">サムを使用する</string>
 <string name="fastscrollsummaryoff">サムを使用しない</string>
@@ -76,5 +76,12 @@
 <string name="remove_font">フォント削除</string>
 <string name="remove_font_message">「%s」は削除されました</string>
 <string name="remove_font_confirm">「%s」を削除しますか？</string>
+<string name="deffontsettingtitle">デフォルトフォント設定</string>
+<string name="fontsettingtitle">フォント設定</string>
+<string name="fontsettings_name">フォント設定</string>
+<string name="fontindex">見出し語フォント</string>
+<string name="fontphone">発音記号フォント</string>
+<string name="fonttrans">訳文フォント</string>
+<string name="fontsample">用例フォント</string>
 
 </resources>

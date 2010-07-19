@@ -2,8 +2,6 @@ package jp.sblo.pandora.adice;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.Map.Entry;
@@ -74,6 +72,20 @@ public class FontCache
 
 		return ret;
 
+	}
+	public ArrayList<fontName> getAllList()
+	{
+		ArrayList<fontName> ret = new ArrayList<fontName>();
+		Set<Entry<String,Typeface>> sets = mFontCache.entrySet();
+
+		for( Entry<String,Typeface> entry : sets )
+		{
+			String key = entry.getKey();
+			File f = new File(key);
+			ret.add(new fontName(key ,f.getName() ));
+		}
+
+		return ret;
 	}
 
 	public String[] getFileList()

@@ -54,7 +54,7 @@
 <string name="thaialphabet">Thai dictionary</string>
 <string name="thaisummaryon">Thai dictionary</string>
 <string name="thaisummaryoff">Other dictionary</string>
-<string name="fontsizettitle">Font size</string>
+<string name="fonttitle">Font</string>
 <string name="fastscroll">Fast Scroll</string>
 <string name="fastscrollsummaryon">Use thumb of scrollbar</string>
 <string name="fastscrollsummaryoff">Not use thumb of scrollbar</string>
@@ -79,5 +79,13 @@
 <string name="remove_font">Remove font</string>
 <string name="remove_font_message">%s has been removed.</string>
 <string name="remove_font_confirm">Do you remove the font?\n%s</string>
+<string name="deffontsettingtitle">Default Font Settings</string>
+<string name="fontsettingtitle">Font Settings</string>
+<string name="fontsettings_name">Font Settings</string>
+<string name="fontindex">Font of Index</string>
+<string name="fontphone">Font of Phone</string>
+<string name="fonttrans">Font of Contents</string>
+<string name="fontsample">Font of Sample</string>
+
 
 </resources>
