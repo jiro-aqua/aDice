@@ -1,8 +1,12 @@
 package jp.sblo.pandora.adice;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.io.File;
 import java.util.List;
+
+import jp.sblo.pandora.adice.FontCache.fontName;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -49,15 +53,15 @@ public class FontManagerActivity extends ListActivity
 				if ( position < mFontList.size()-1 ){
 					new AlertDialog.Builder(thisAct)
 					.setIcon(R.drawable.icon)
-					.setTitle("Remove font")
-					.setMessage("Do you remove the font ?\n" + fontname )
-					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					.setTitle(R.string.remove_font)
+					.setMessage( getResources().getString(R.string.remove_font_confirm, fontname) )
+					.setPositiveButton(R.string.label_yes, new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int whichButton) {
 					        // YESの処理
 							new AlertDialog.Builder(thisAct)
-							.setTitle("Remove font")
-							.setMessage(fontname + " is removed.")
+							.setTitle(R.string.remove_font)
+							.setMessage( getResources().getString(R.string.remove_font_message, fontname)  )
 							.setPositiveButton(R.string.label_ok, null)
 							.show();
 
@@ -66,7 +70,7 @@ public class FontManagerActivity extends ListActivity
 					    }
 
 					})
-					.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					.setNegativeButton(R.string.label_no, new DialogInterface.OnClickListener() {
 					    public void onClick(DialogInterface dialog, int whichButton) {
 					        // ここにNOの処理
 					    }
@@ -96,6 +100,15 @@ public class FontManagerActivity extends ListActivity
 	private void loadList(){
 		mFontList = mFontCache.getList();
 
+		Collections.sort(mFontList ,  new Comparator<FontCache.fontName>(){
+
+			@Override
+			public int compare(fontName object1, fontName object2)
+			{
+				return object2.fontname.compareTo(object1.fontname);
+			}
+
+		});
 		mFontList.add( new FontCache.fontName("","") );
 
 		mFontAdapter = new FontAdapter(this,R.layout.fontlist_row , R.id.fontname01 , mFontList);

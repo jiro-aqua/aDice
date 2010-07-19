@@ -94,6 +94,20 @@ public class FontCache
 		return ret.toArray(new String[0]);
 	}
 
+	public String[] getAllFileList()
+	{
+		ArrayList<String> ret = new ArrayList<String>();
+		Set<Entry<String,Typeface>> sets = mFontCache.entrySet();
+
+		for( Entry<String,Typeface> entry : sets )
+		{
+			String key = entry.getKey();
+			ret.add( key );
+		}
+
+		return ret.toArray(new String[0]);
+	}
+
 	public String getSampleString( String key )
 	{
 		if (key.equals(PHONE) ){

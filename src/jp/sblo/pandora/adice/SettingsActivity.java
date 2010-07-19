@@ -192,7 +192,6 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 				fontlist.append(font);
 				fontlist.append('|');
 			}
-			fontlist.deleteCharAt(fontlist.length()-1);
 			editor.putString(KEY_FONTS, fontlist.toString() );
 			editor.commit();
 		}

@@ -67,5 +67,14 @@
 <string name="clipboardsearch">クリップボード検索</string>
 <string name="clipboardsearchsummaryon">クリップボード検索有効</string>
 <string name="clipboardsearchsummaryoff">クリップボード検索無効</string>
+<string name="fontmanager">フォント管理</string>
+<string name="fontmanager_name">フォント管理</string>
+<string name="addfont">フォントを追加する</string>
+<string name="label_ok">OK</string>
+<string name="label_yes">はい</string>
+<string name="label_no">いいえ</string>
+<string name="remove_font">フォント削除</string>
+<string name="remove_font_message">「%s」は削除されました</string>
+<string name="remove_font_confirm">「%s」を削除しますか？</string>
 
 </resources>
