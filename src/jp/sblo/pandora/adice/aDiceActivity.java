@@ -23,7 +23,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -31,7 +30,6 @@ import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.Html;
@@ -106,8 +104,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		mFontCache.put(FontCache.NORMAL , mNormalFont  );
 		mFontCache.put(FontCache.PHONE , Typeface.createFromAsset( getAssets(), "DoulosSILR.ttf") );
 
-		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-		String[] fontlist = sp.getString( FontSettingsActivity.KEY_FONTS , "").split("\\|");
+		String[] fontlist = FontSettingsActivity.readFontList(this).split("\\|");
 
 		for( String font : fontlist ){
 			if ( font.length() == 0 )
@@ -254,11 +251,8 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	private void initDice()
 	{
 		synchronized( this ){
-			final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 
-			final String key = SettingsActivity.KEY_DICS;
-			// Log.i(TAG,key );
-			final String dicss = sp.getString(key, "");
+			final String dicss = SettingsActivity.getDics(this);
 			final String[] dics = dicss.split("\\|");
 
 			// 外部辞書読込
@@ -458,6 +452,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	@Override
 	protected void onPause()
 	{
+		searchForward();
 		super.onPause();
 	}
 
@@ -466,19 +461,22 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	{
 		super.onResume();
 
-		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-
 		mLast = "";
 		// 設定値反映
-		mDelay = Integer.parseInt(sp.getString(SettingsActivity.KEY_DELAYSEARCH, "100"));
+
+		SettingsActivity.Settings set = SettingsActivity.readSettings(this);
+
+		mDelay = set.delay;
+
 		for (int i = 0; i < mDice.getDicNum(); i++) {
 			SettingsActivity.apllySettings(this, mDice.getDicInfo(i));
 		}
-		mFastScroll = sp.getBoolean(SettingsActivity.KEY_FASTSCROLL, false);
+		mFastScroll = set.fastScroll;
 		mDicView.setFastScrollEnabled(mFastScroll);
 
+
 		// タイ語フォントの適用
-		if (  sp.getBoolean( SettingsActivity.KEY_THAI , false ) ){
+		if (  set.thai ){
 			mFontCache.put(FontCache.NORMAL , mThaiFont  );
 		}else{
 			mFontCache.put(FontCache.NORMAL , mNormalFont  );
@@ -496,7 +494,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 			text = extras.getString(Intent.EXTRA_TEXT);
 		}
 		// クリップボード検索
-		if (text == null && sp.getBoolean(SettingsActivity.KEY_CLIPBOARD_SEARCH, false)) {
+		if (text == null && set.clipboard ) {
 			CharSequence clip = mClipboardManager.getText();
 			if (mLastClipboard == null || !mLastClipboard.equals(clip)) {
 				text = clip.toString();

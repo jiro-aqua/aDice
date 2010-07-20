@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 import jp.sblo.pandora.adice.FontCache.fontName;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -21,7 +22,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 
 public class FontSettingsActivity extends PreferenceActivity implements OnPreferenceChangeListener
 {
-
 	public static final String KEY_INDEXFONT  = "|indexfont" ;
 	public static final String KEY_PHONEFONT= "|phonefont" ;
 	public static final String KEY_EXAMPLEFONT= "|examplefont" ;
@@ -71,9 +71,11 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 			@Override
 			public int compare(fontName object1, fontName object2)
 			{
-				return object1.fontname.compareTo(object2.fontname);
+				return object1.fontname.compareToIgnoreCase(object2.fontname);
 			}
 		});
+
+		mFontList.add(0, new FontCache.fontName( "" , "なし" ));
 	}
 
 	private String[] getFontNames()
@@ -103,39 +105,39 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 		final String[] filenames  = getFileNames();
 
 		{
-//			final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+			final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 
 			// フォントカテゴリ
 			final PreferenceCategory catfont = new PreferenceCategory(this);
 			catfont.setTitle(R.string.fonttitle);
 			mPs.addPreference(catfont);
-			{
+			if ( Build.VERSION.SDK.compareTo("4") >= 0 )			{
 				// インデックスフォント設定
 				final ListPreference pr = new ListPreference(this);
-				pr.setKey(name + KEY_INDEXFONT);
-				pr.setSummary(pr.getValue());
+				pr.setKey(name +KEY_INDEXFONT);
 				pr.setTitle(R.string.fontindex);
 				pr.setEntries(fontnames);
 				pr.setEntryValues(filenames);
 				pr.setOnPreferenceChangeListener(this);
+				pr.setSummary(sp.getString(pr.getKey(), ""));
 				catfont.addPreference(pr);
 			}
 			{
 				// インデックスフォントサイズ
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name + KEY_INDEXFONTSIZE);
-				pr.setSummary(pr.getValue());
+				pr.setSummary(sp.getString(pr.getKey(), ""));
 				pr.setTitle(R.string.fontsizeindex);
 				pr.setEntries(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setEntryValues(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setOnPreferenceChangeListener(this);
 				catfont.addPreference(pr);
 			}
-			{
+			if ( Build.VERSION.SDK.compareTo("4") >= 0 ){
 				// 本文フォント設定
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name + KEY_MEANINGFONT);
-				pr.setSummary(pr.getValue());
+				pr.setSummary(sp.getString(pr.getKey(), ""));
 				pr.setTitle(R.string.fonttrans);
 				pr.setEntries(fontnames);
 				pr.setEntryValues(filenames);
@@ -146,18 +148,18 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 				// 本文フォントサイズ
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name + KEY_MEANINGFONTSIZE );
-				pr.setSummary(pr.getValue());
+				pr.setSummary(sp.getString(pr.getKey(), ""));
 				pr.setTitle(R.string.fontsizetrans);
 				pr.setEntries(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setEntryValues(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setOnPreferenceChangeListener(this);
 				catfont.addPreference(pr);
 			}
-			{
+			if ( Build.VERSION.SDK.compareTo("4") >= 0 ){
 				// 発音記号フォント設定
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name + KEY_PHONEFONT);
-				pr.setSummary(pr.getValue());
+				pr.setSummary(sp.getString(pr.getKey(), ""));
 				pr.setTitle(R.string.fontphone);
 				pr.setEntries(fontnames);
 				pr.setEntryValues(filenames);
@@ -168,18 +170,18 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 				// 発音記号フォントサイズ
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name + KEY_PHONEFONTSIZE);
-				pr.setSummary(pr.getValue());
+				pr.setSummary(sp.getString(pr.getKey(), ""));
 				pr.setTitle(R.string.fontsizephone);
 				pr.setEntries(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setEntryValues(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setOnPreferenceChangeListener(this);
 				catfont.addPreference(pr);
 			}
-			{
+			if ( Build.VERSION.SDK.compareTo("4") >= 0 ){
 				// 用例フォント設定
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name + KEY_EXAMPLEFONT);
-				pr.setSummary(pr.getValue());
+				pr.setSummary(sp.getString(pr.getKey(), ""));
 				pr.setTitle(R.string.fontsample);
 				pr.setEntries(fontnames);
 				pr.setEntryValues(filenames);
@@ -190,7 +192,7 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 				// 用例フォントサイズ
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name + KEY_EXAMPLEFONTSIZE );
-				pr.setSummary(pr.getValue());
+				pr.setSummary(sp.getString(pr.getKey(), ""));
 				pr.setTitle(R.string.fontsizesample);
 				pr.setEntries(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
 				pr.setEntryValues(new String[] { "10", "14", "16", "18", "20", "24", "30", "36",  });
@@ -233,8 +235,6 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 	{
 		if (requestCode == REQUEST_CODE_FONTMANAGER && resultCode == RESULT_OK ) {
 			// preferenceに登録
-			final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-			SharedPreferences.Editor editor = sp.edit();
 
 			String[] fonts = FontCache.getInstance().getFileList();
 			StringBuilder  fontlist = new StringBuilder();
@@ -242,9 +242,23 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 				fontlist.append(font);
 				fontlist.append('|');
 			}
-			editor.putString(KEY_FONTS, fontlist.toString() );
-			editor.commit();
+			writeFontList(this, fontlist.toString());
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
+
+	public	static void writeFontList(Context ctx , String fontlist)
+	{
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putString( KEY_FONTS, fontlist );
+		editor.commit();
+	}
+	public	static String readFontList(Context ctx)
+	{
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return sp.getString( KEY_FONTS , "" ) ;
+	}
+
+
 }

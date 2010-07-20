@@ -47,6 +47,16 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	public static final String KEY_FASTSCROLL = "fastscroll";
 	public static final String KEY_CLIPBOARD_SEARCH = "clipboardsearch";
 
+	public static final String KEY_INDEXFONT  = "|indexfont" ;
+	public static final String KEY_PHONEFONT= "|phonefont" ;
+	public static final String KEY_EXAMPLEFONT= "|examplefont" ;
+	public static final String KEY_MEANINGFONT= "|trasnfont" ;
+	public static final String KEY_EXAMPLEFONTSIZE = "|Examplefontsize";
+	public static final String KEY_PHONEFONTSIZE = "|Phonefontsize";
+	public static final String KEY_MEANINGFONTSIZE = "|Meaningfontsize";
+	public static final String KEY_INDEXFONTSIZE = "|indexfontsize";
+	public static final String KEY_FONTS = "fontslist";
+
 	public static final String DEFAULT_FONT = ".default";
 
 	static class DicTemplate {
@@ -249,10 +259,11 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 					// 検索ディレイ
 					final ListPreference pr = new ListPreference(this);
 					pr.setKey(KEY_DELAYSEARCH);
-					pr.setSummary(R.string.delaysummary );
+					pr.setSummary(sp.getString(pr.getKey(), "100") );
 					pr.setTitle(R.string.delaytitle);
 					pr.setEntries(new String[] { "10ms","100ms", "200ms", "300ms", "500ms", "750ms", "1s", });
 					pr.setEntryValues(new String[] { "10", "100", "200", "300", "500", "750", "1000", });
+					pr.setOnPreferenceChangeListener(this);
 					catdic.addPreference(pr);
 				}
 				{
@@ -318,7 +329,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 					// 辞書追加
 					final Preference prAdddic = new Preference(this);
 					prAdddic.setKey(KEY_ADD_DICTIONARY);
-					prAdddic.setSummary(R.string.adddictionarysummary);
+//					prAdddic.setSummary(R.string.adddictionarysummary);
 					prAdddic.setTitle(R.string.adddictionarytitle);
 					catdic.addPreference(prAdddic);
 
@@ -505,7 +516,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 						// 削除ボタン
 						final Preference pr = new Preference(this);
 						pr.setKey(name + KEY_REMOVE_THE_DICTIONARY);
-						pr.setSummary(R.string.removedictionarysummary);
+//						pr.setSummary(R.string.removedictionarysummary);
 						pr.setTitle(R.string.removedictionarytitle);
 						pr.setOnPreferenceClickListener(new RemoveDictionary());
 						psdic.addPreference(pr);
@@ -536,7 +547,10 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		String val = sp.getString(  k ,"" );
 		if ( val.length() == 0 ){
 			k = defname + key;
-			val = sp.getString(  k , defvalue );
+			val = sp.getString(  k , "" );
+			if ( val.length()==0 ){
+				val = defvalue;
+			}
 		}
 		return val;
 	}
@@ -554,15 +568,16 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		dicinfo.SetNotuse( !sp.getBoolean(name + KEY_USE,false ) );
 		dicinfo.SetSearchMax( Integer.parseInt( sp.getString( name + KEY_RESULTNUM ,"5" ) ) );
 
-		dicinfo.SetIndexSize( Integer.parseInt( selectKey( sp , FontSettingsActivity.KEY_INDEXFONTSIZE , name , DEFAULT_FONT  , "20" ) ) );
-		dicinfo.SetPhoneticSize( Integer.parseInt( selectKey( sp ,FontSettingsActivity.KEY_PHONEFONTSIZE, name ,DEFAULT_FONT  , "16" ) ) );
-		dicinfo.SetSampleSize( Integer.parseInt( selectKey( sp , FontSettingsActivity.KEY_EXAMPLEFONTSIZE, name ,DEFAULT_FONT  , "16" )) ) ;
-		dicinfo.SetTransSize( Integer.parseInt( selectKey( sp , FontSettingsActivity.KEY_MEANINGFONTSIZE, name , DEFAULT_FONT , "16" )) ) ;
+		dicinfo.SetIndexSize(    Integer.parseInt( selectKey( sp , KEY_INDEXFONTSIZE  , name ,DEFAULT_FONT  , "20" )) );
+		dicinfo.SetPhoneticSize( Integer.parseInt( selectKey( sp , KEY_PHONEFONTSIZE  , name ,DEFAULT_FONT  , "16" )) );
+		dicinfo.SetTransSize(    Integer.parseInt( selectKey( sp , KEY_MEANINGFONTSIZE, name ,DEFAULT_FONT  , "16" )) );
+		dicinfo.SetSampleSize(   Integer.parseInt( selectKey( sp , KEY_EXAMPLEFONTSIZE, name ,DEFAULT_FONT  , "16" )) );
 
-		dicinfo.SetIndexFont( sp.getString( name + FontSettingsActivity.KEY_INDEXFONT, FontCache.NORMAL )  );
-		dicinfo.SetPhoneticFont( sp.getString( name + FontSettingsActivity.KEY_PHONEFONT, FontCache.PHONE )  );
-		dicinfo.SetTransFont( sp.getString( name + FontSettingsActivity.KEY_MEANINGFONT, FontCache.NORMAL )  );
-		dicinfo.SetSampleFont( sp.getString( name + FontSettingsActivity.KEY_EXAMPLEFONT, FontCache.NORMAL )  );
+		dicinfo.SetIndexFont(    selectKey( sp , KEY_INDEXFONT  , name , DEFAULT_FONT  , FontCache.NORMAL )) ;
+		dicinfo.SetPhoneticFont( selectKey( sp , KEY_PHONEFONT  , name , DEFAULT_FONT  , FontCache.PHONE  )) ;
+		dicinfo.SetTransFont(    selectKey( sp , KEY_MEANINGFONT, name , DEFAULT_FONT  , FontCache.NORMAL )) ;
+		dicinfo.SetSampleFont(   selectKey( sp , KEY_EXAMPLEFONT, name , DEFAULT_FONT  , FontCache.NORMAL )) ;
+
 	}
 	public static void setDefaultSettings(Context context, IdicInfo dicinfo)
 	{
@@ -579,14 +594,14 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 			editor.putBoolean(name + KEY_USE , true );
 			editor.putString( name + KEY_RESULTNUM ,"5"  ) ;
 
-			editor.putString(  name + FontSettingsActivity.KEY_INDEXFONTSIZE , "" ) ;
-			editor.putString(  name + FontSettingsActivity.KEY_PHONEFONTSIZE , "" ) ;
-			editor.putString(  name + FontSettingsActivity.KEY_EXAMPLEFONTSIZE , "" ) ;
-			editor.putString(  name + FontSettingsActivity.KEY_MEANINGFONTSIZE , "" ) ;
-			editor.putString(  name + FontSettingsActivity.KEY_INDEXFONT , "" ) ;
-			editor.putString(  name + FontSettingsActivity.KEY_PHONEFONT , "" ) ;
-			editor.putString(  name + FontSettingsActivity.KEY_EXAMPLEFONT , "" ) ;
-			editor.putString(  name + FontSettingsActivity.KEY_MEANINGFONT , "" ) ;
+			editor.putString(  name + KEY_INDEXFONTSIZE , "" ) ;
+			editor.putString(  name + KEY_PHONEFONTSIZE , "" ) ;
+			editor.putString(  name + KEY_EXAMPLEFONTSIZE , "" ) ;
+			editor.putString(  name + KEY_MEANINGFONTSIZE , "" ) ;
+			editor.putString(  name + KEY_INDEXFONT , "" ) ;
+			editor.putString(  name + KEY_PHONEFONT , "" ) ;
+			editor.putString(  name + KEY_EXAMPLEFONT , "" ) ;
+			editor.putString(  name + KEY_MEANINGFONT , "" ) ;
 
 			// 辞書名自動判定
 			for( int i=0;i<DICNTEMPLATE.length ;i++ ){
@@ -645,5 +660,35 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		}
 	}
 
+	public static class Settings {
+		int delay;
+		boolean fastScroll;
+		boolean thai;
+		boolean clipboard;
+	}
+
+	public	static Settings readSettings(Context ctx)
+	{
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
+		Settings ret = new Settings();
+
+		ret.delay = Integer.parseInt(sp.getString(KEY_DELAYSEARCH, "100"));
+		ret.fastScroll = sp.getBoolean(KEY_FASTSCROLL, false);
+		ret.thai = sp.getBoolean( KEY_THAI , false );
+		ret.clipboard = sp.getBoolean(KEY_CLIPBOARD_SEARCH, false);
+		return ret;
+	}
+
+	public	static String getDics(Context ctx)
+	{
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return sp.getString( KEY_DICS , "");
+
+	}
 
 }
+
+
+
+
+

@@ -46,7 +46,7 @@ class Index implements IdicInfo
 //	protected boolean m_isirreg; // 不定変化辞書フラグ
 	protected boolean m_accent; // アクセント同一視検索スイッチ
 	protected boolean m_english; // 英語語尾変化スイッチ
-	protected boolean m_thai; // タイ語使用スイッチ
+//	protected boolean m_thai; // タイ語使用スイッチ
 	protected boolean m_notuse; // 使用しないフラグ
 
 	protected String m_IndexFont; // 見出し語フォント
@@ -83,7 +83,7 @@ class Index implements IdicInfo
 			{ "n", "Ññ" }, { "o", "ÒÓÔÕÖØòóôõöøŒœ" }, { "u", "ÙÚÛÜùúûü" }, { "y", "ÝÞýþÿ" }, { "s", "ß" }, };
 
 	private RandomAccessFile mSrcStream = null;
-	final private String TAG = "aDice";
+//	final private String TAG = "aDice";
 
 	Index(String filename, int start, int size, int nindex, boolean blockbits, int blocksize,boolean unicode)
 	{
@@ -426,17 +426,17 @@ class Index implements IdicInfo
 		return m_english;
 	}
 
-	@Override
-	public void SetThai(boolean b)
-	{
-		m_thai = b;
-	}
-
-	@Override
-	public boolean GetThai()
-	{
-		return m_thai;
-	}
+//	@Override
+//	public void SetThai(boolean b)
+//	{
+//		m_thai = b;
+//	}
+//
+//	@Override
+//	public boolean GetThai()
+//	{
+//		return m_thai;
+//	}
 
 	@Override
 	public void SetNotuse(boolean b)

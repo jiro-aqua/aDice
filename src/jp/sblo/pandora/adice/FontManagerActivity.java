@@ -105,7 +105,7 @@ public class FontManagerActivity extends ListActivity
 			@Override
 			public int compare(fontName object1, fontName object2)
 			{
-				return object2.fontname.compareTo(object1.fontname);
+				return object1.fontname.compareToIgnoreCase(object2.fontname);
 			}
 
 		});

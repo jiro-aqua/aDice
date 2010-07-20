@@ -1,9 +1,9 @@
 package jp.sblo.pandora.adice;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.io.File;
+import java.util.HashMap;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.Map.Entry;
 
 import android.graphics.Typeface;
@@ -11,7 +11,7 @@ import android.graphics.Typeface;
 public class FontCache
 {
 	static FontCache mInstance = null;
-	private WeakHashMap<String , Typeface> mFontCache = new WeakHashMap<String , Typeface>();
+	private HashMap<String , Typeface> mFontCache = new HashMap<String , Typeface>();
 
 	static public String	NORMAL = "Normal";
 	static public String	PHONE = "DoulosSILR";

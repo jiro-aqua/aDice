@@ -14,8 +14,8 @@ public interface IdicInfo {
 	boolean GetAccent( );
 	void	SetEnglish( boolean b );
 	boolean	GetEnglish(  );
-	void	SetThai( boolean b );
-	boolean	GetThai(  );
+//	void	SetThai( boolean b );
+//	boolean	GetThai(  );
 	void	SetNotuse( boolean b );
 	boolean	GetNotuse(  );
 	void	SetIndexFont( String b );
