@@ -12,17 +12,17 @@ final public class DiceFactory {
 		return mDice;
 	}
 
-	private static CharSequence trimchar(CharSequence input,
-			CharSequence pattern) {
+	private static CharSequence trimchar(CharSequence input,CharSequence patterna ,CharSequence patternb  ) {
 		final int len = input.length();
-		final int patlen = pattern.length();
+		final int patlena = patterna.length();
+		final int patlenb = patternb.length();
 		int s, e;
 		// 行頭から
 		for (s = 0; s < len; s++) {
 			boolean found = false;
 			char c = input.charAt(s);
-			for (int j = 0; j < patlen; j++) {
-				if (c == pattern.charAt(j)) {
+			for (int j = 0; j < patlena; j++) {
+				if (c == patterna.charAt(j)) {
 					found = true;
 					break;
 				}
@@ -36,8 +36,8 @@ final public class DiceFactory {
 		for (e = len - 1; e > s; e--) {
 			boolean found = false;
 			char c = input.charAt(e);
-			for (int j = 0; j < patlen; j++) {
-				if (c == pattern.charAt(j)) {
+			for (int j = 0; j < patlenb; j++) {
+				if (c == patternb.charAt(j)) {
 					found = true;
 					break;
 				}
@@ -54,7 +54,7 @@ final public class DiceFactory {
 		final CharSequence dakuon="、･-ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポァィゥェォャュョッ";
 	  	final CharSequence seion =",・ カキクケコサシスセソタチツテトハヒフヘホハヒフヘホアイウエオヤユヨツ";
 
-		s = trimchar(s , " 　\"'?.,()[]{}|!");
+		s = trimchar(s , " 　" , " 　\"'?.,()[]{}|!");
 
 		char[] cs = s.toString().toCharArray();
 

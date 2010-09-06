@@ -88,8 +88,8 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		}
 	};
 	private final FontCache mFontCache = FontCache.getInstance();
-	private Typeface mNormalFont ;
-	private Typeface mThaiFont ;
+	private static Typeface mNormalFont ;
+	private static Typeface mThaiFont ;
 	private boolean mInitialized = false;
 
 	/** Called when the activity is first created. */
@@ -99,19 +99,24 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		super.onCreate(savedInstanceState);
 
 		// fontロード
-		mNormalFont = Typeface.defaultFromStyle(Typeface.NORMAL);
-		mThaiFont = Typeface.createFromAsset( getAssets(), "DroidSansThai.ttf");
-		mFontCache.put(FontCache.NORMAL , mNormalFont  );
-		mFontCache.put(FontCache.PHONE , Typeface.createFromAsset( getAssets(), "DoulosSILR.ttf") );
-
+		if ( mNormalFont == null ){
+			mNormalFont = Typeface.defaultFromStyle(Typeface.NORMAL);
+			mFontCache.put(FontCache.NORMAL , mNormalFont  );
+		}
+		if ( mThaiFont==null ){
+			mThaiFont = Typeface.createFromAsset( getAssets(), "DroidSansThai.ttf");
+			mFontCache.put(FontCache.PHONE , Typeface.createFromAsset( getAssets(), "DoulosSILR.ttf") );
+		}
 		String[] fontlist = FontSettingsActivity.readFontList(this).split("\\|");
 
 		for( String font : fontlist ){
 			if ( font.length() == 0 )
 				continue;
-			File f = new File( font );
-			Typeface tf = FontManagerActivity.createTypefaceFromFile( f );
-			mFontCache.put(font, tf);
+			if (mFontCache.get(font)==null ){
+				File f = new File( font );
+				Typeface tf = FontManagerActivity.createTypefaceFromFile( f );
+				mFontCache.put(font, tf);
+			}
 		}
 
 		// プログレスダイアログを表示
@@ -209,6 +214,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 			}
 		});
 
+		final Context thisCtx = this;
 		new Thread() {
 			@Override
 			public void run()
@@ -225,14 +231,36 @@ public class aDiceActivity extends Activity implements DicView.Callback
 						{
 							dialog.dismiss();
 
-							String text = mEdittext.getEditableText().toString();
-							text = DiceFactory.convert(text);
-							if (text.length() > 0) {
-								mLast = text;
+							if ( SettingsActivity.isVersionUp(thisCtx) ){
+								new AlertDialog.Builder(mContext)
+								.setTitle(R.string.welcome_title)
+								.setMessage(R.string.welcome_message)
+								.setNegativeButton(R.string.label_close, new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int which) {
+										dialog.dismiss();
+									}
+								})
+								.setPositiveButton(R.string.label_download, new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int which) {
+										dialog.dismiss();
+										// 設定画面呼び出し
+										Intent intent = new Intent();
+										intent.setClassName("jp.sblo.pandora.adice", "jp.sblo.pandora.adice.SettingsActivity");
+										intent.putExtra(SettingsActivity.EXTRA_DLNOW, true);
+										startActivity(intent);
+									}
+								})
+								.show();
+							}else{
 
-								search(text, 10);
+								String text = mEdittext.getEditableText().toString();
+								text = DiceFactory.convert(text);
+								if (text.length() > 0) {
+									mLast = text;
+
+									search(text, 10);
+								}
 							}
-
 						}
 					});
 //				} catch (InterruptedException e) {
@@ -246,6 +274,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		AndroidExceptionHandler.bind(this, "019749b2-5b96-4c90-b793-7e04cc8d3cc7");
 
 		mClipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+
 	}
 
 	private void initDice()

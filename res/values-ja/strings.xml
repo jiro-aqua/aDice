@@ -80,5 +80,16 @@
 	<string name="fontphone">発音記号フォント</string>
 	<string name="fonttrans">訳文フォント</string>
 	<string name="fontsample">用例フォント</string>
+	<string name="dldictionarytitle">辞書ダウンロード</string>
+	<string name="install_name">辞書インストール</string>
+	<string name="install_url">file:///android_asset/installja.html</string>
+	<string name="install_title">ダウンロード</string>
+	<string name="download_ok">ダウンロード成功しました</string>
+	<string name="download_ng">ダウンロード失敗しました</string>
+	<string name="download_process">ダウンロード処理中</string>
+	<string name="welcome_title">aDiceへようこそ！</string>
+	<string name="welcome_message">aDiceはPDIC辞書ビューワーです。\n\nPC等でPDIC形式の辞書をお使いの方は、SDカードの適当なフォルダにコピーしてから、「設定」→「辞書追加」を選んでください。\n(PDIC/Unicode最新版で辞書の変換が必要な場合もあります)\n\nまたは、「設定」→「辞書ダウンロード」の画面からフリーの辞書をダウンロードすることもできます。</string>
+	<string name="label_close">閉じる</string>
+	<string name="label_download">辞書ダウンロード</string>
 
 </resources>

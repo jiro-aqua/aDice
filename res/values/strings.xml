@@ -80,5 +80,15 @@
 	<string name="fontphone">Font of Phone</string>
 	<string name="fonttrans">Font of Contents</string>
 	<string name="fontsample">Font of Sample</string>
-
+	<string name="dldictionarytitle">Download Dictionary</string>
+	<string name="install_name">Install dictionary</string>
+	<string name="install_url">file:///android_asset/install.html</string>
+	<string name="install_title">Download</string>
+	<string name="download_ok">Download successed</string>
+	<string name="download_ng">Download failed</string>
+	<string name="download_process">In Processing...</string>
+	<string name="welcome_title">Welcome to aDice!</string>
+	<string name="welcome_message">aDice is a dictionary viewer for PDIC format.\n\nNow you can download FREE dictionaries . ( Settings -> Download Dictionary )\n\nOr put PDIC file on the SD Card , you can use it.</string>
+	<string name="label_close">Close</string>
+	<string name="label_download">Download Now</string>
 </resources>

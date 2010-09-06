@@ -1,7 +1,7 @@
 package jp.sblo.pandora.adice;
 
-import java.io.FileNotFoundException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -57,6 +59,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	public static final String KEY_INDEXFONTSIZE = "|indexfontsize";
 	public static final String KEY_FONTS = "fontslist";
 
+	public static final String KEY_LASTVERSION = "LastVersion";
+
 	public static final String DEFAULT_FONT = ".default";
 
 	static class DicTemplate {
@@ -84,6 +88,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	private Idice mDice = null;
 	private final static int REQUEST_CODE_ADDDIC = 0x1234;
 	private final static int REQUEST_CODE_FONTSETTINGS = 0x1237;
+	public final static String EXTRA_DLNOW = "DownloadNow";
 	private final Context mContext = this;
 
 	@Override
@@ -96,7 +101,11 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 
 		createDictionaryPreference();
 
-
+		Intent it = getIntent();
+		Bundle extras = it.getExtras();
+		if ( extras !=null && extras.getBoolean(EXTRA_DLNOW, false) ){
+			startDownload();
+		}
 	}
 
 	@Override
@@ -106,7 +115,9 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 
 		// 辞書選択画面からの応答
 		if (requestCode == REQUEST_CODE_ADDDIC && resultCode == RESULT_OK && data != null) {
-			final String dicname = data.getExtras().getString(FileSelectorActivity.INTENT_FILEPATH);
+			final String dicname = data.getExtras().getString(FileSelectorActivity.INTENT_FILEPATH );
+			final boolean english = data.getExtras().getBoolean(InstallActivity.INTENT_ENGLISH );
+			final String defname = data.getExtras().getString(InstallActivity.INTENT_NAME);
 			if (dicname != null) {
 		        // プログレスダイアログを表示
 				final ProgressDialog dialog = new ProgressDialog(this);
@@ -143,11 +154,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 								mDice.close( dicinfo );
 							}else{
 								failed = false;
-								setDefaultSettings(mContext, dicinfo );
-
-
-
-
+								setDefaultSettings(mContext, dicinfo , defname , english );
 							}
 						}
 
@@ -171,6 +178,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 											mContext.getResources().getString(R.string.toasterror , dicname ) ,
 											Toast.LENGTH_LONG).show();
 								}
+								finish();
 							}
 						});
 		        	}
@@ -343,6 +351,21 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 							intent.putExtra(FileSelectorActivity.INTENT_EXTENSION, new String[] { ".dic" });
 							startActivityForResult(intent, REQUEST_CODE_ADDDIC);
 
+							return true;
+						}
+					});
+				}
+				{
+					// 辞書ダウンロード
+					final Preference pr = new Preference(this);
+					pr.setTitle(R.string.dldictionarytitle);
+					catdic.addPreference(pr);
+
+					pr.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+						@Override
+						public boolean onPreferenceClick(Preference preference)
+						{
+							startDownload();
 							return true;
 						}
 					});
@@ -579,9 +602,13 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		dicinfo.SetSampleFont(   selectKey( sp , KEY_EXAMPLEFONT, name , DEFAULT_FONT  , FontCache.NORMAL )) ;
 
 	}
-	public static void setDefaultSettings(Context context, IdicInfo dicinfo)
+
+	public static void setDefaultSettings(Context context, IdicInfo dicinfo,String defname , boolean english )
 	{
 		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+		if ( defname==null ){
+			defname = "";
+		}
 
 		//インデクス作成までOK
 		final String name = dicinfo.GetFilename();
@@ -589,8 +616,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		// 名称未設定の時はデフォルトに戻す
 		if ( sp.getString(name +KEY_DICNAME, "").length() == 0 ){
 			final SharedPreferences.Editor editor = sp.edit();
-			editor.putString( name + KEY_DICNAME , "" );
- 			editor.putBoolean(name + KEY_ENGLISH , false ) ;
+			editor.putString( name + KEY_DICNAME , defname );
+ 			editor.putBoolean(name + KEY_ENGLISH , english ) ;
 			editor.putBoolean(name + KEY_USE , true );
 			editor.putString( name + KEY_RESULTNUM ,"5"  ) ;
 
@@ -686,9 +713,42 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 
 	}
 
+
+	public static boolean isVersionUp(Context ctx)
+	{
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
+		boolean ret = false;
+		int lastversion = sp.getInt(KEY_LASTVERSION, 0 );
+		int versioncode;
+		try {
+			versioncode = ctx.getPackageManager().getPackageInfo("jp.sblo.pandora.adice", 0).versionCode;
+			ret = (lastversion != versioncode);
+
+			if ( ret ){
+				Editor editor = sp.edit();
+				editor.putInt(KEY_LASTVERSION, versioncode );
+				editor.commit();
+			}
+
+		} catch (NameNotFoundException e) {
+		}
+		return ret;
+	}
+
+
+	private void startDownload()
+	{
+		// 辞書DL画面呼び出し
+		Intent intent = new Intent(Intent.ACTION_VIEW );
+
+//		intent.setData(Uri.parse("http://aquamarine.sakura.ne.jp/sblo_files/pandora/image/install.html"));
+
+		intent.setClassName("jp.sblo.pandora.adice", "jp.sblo.pandora.adice.AboutActivity");
+//		intent.putExtra(AboutActivity.EXTRA_URL, "http://aquamarine.sakura.ne.jp/sblo_files/pandora/image/install.html" );
+		intent.putExtra(AboutActivity.EXTRA_URL, getString( R.string.install_url ) );
+		intent.putExtra(AboutActivity.EXTRA_TITLE, getString( R.string.install_title ) );
+		startActivityForResult(intent, REQUEST_CODE_ADDDIC);
+
+	}
 }
-
-
-
-
 

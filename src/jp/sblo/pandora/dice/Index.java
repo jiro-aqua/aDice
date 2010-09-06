@@ -831,7 +831,7 @@ class Index implements IdicInfo
 		boolean searchret =false;
 		for(;;){
 			// 最終ブロックは超えない
-			if (ret < m_nindex-1 ) {
+			if (ret < m_nindex ) {
 				// 該当ブロック読み出し
 				int block = getBlockNo(ret++);
 				byte[] pblk = readBlockData(block);
