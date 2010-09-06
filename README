@@ -3,31 +3,34 @@ aDice
 
 - aDice - （えーだいす）
 
-Android用PDIC形式辞書ビューワー 
+aDice is a dictionary viewer for PDIC format on Android.
+(Android用PDIC形式辞書ビューワー)
 
-対応OS：Android 1.5 / 1.6 / 2.1 / 2.2 ～
+Support OS：Android 1.5 / 1.6 / 2.1 / 2.2
 
-動作確認機種：HT-03A[docomo] / SO-01B(Xperia X10)[docomo] / X06HT(HTC Desire)[Softbank] / NEXUS ONE 
+Confirmed Phone：HT-03A(HTC Magic) / SO-01B(Xperia X10) / X06HT(HTC Desire) / NEXUS ONE 
 
-
-■ダウンロード (Android Market)
+■Download from Android Market
 http://market.android.com/search?q=pname:jp.sblo.pandora.adice
 
 
-■説明書
-http://sites.google.com/site/aquamarinepandora/home/adice
+■Document
+http://sites.google.com/site/aquamarinepandora/home/adice (Japanese)
 
 
-■辞書について
-以下のPDIC形式辞書に対応します。
-・Unicode(BOCU-1) Hyper辞書形式 ver6.00 (PDIC/Unicode 5.00以降)
+■Support Format
 
-■開発環境
+aDice supports below PDIC formats.
+
+・Unicode(BOCU-1) Hyper-format ver6.00 (PDIC/Unicode 5.00 or later)
+
+■Development Environment
 ・Eclipse for Java
 ・Android SDK (SDK version 4 Donut)
 
-■本ソフトウェアについて
-・このソフトウェアは以下のライセンスにて配布します。
+■License
+
+・This software is distributed under NYSL.
 
 NYSL Version 0.9982
 
@@ -49,10 +52,33 @@ C. 著作者人格権は 作者(Jiro および Aquamarine Networks.)に帰属し
 D. 以上の３項は、ソース・実行バイナリの双方に適用されます。
 
 ----------------------------------------
+A. This software is "Everyone'sWare". It means:
+  Anybody who has this software can use it as if you're
+  the author.
 
-・動作報告およびバグレポートは、ブログコメント、メール、Twitterなどでご連絡ください。
- （このページの一番下参照） 
+  A-1. Freeware. No fee is required.
+  A-2. You can freely redistribute this software.
+  A-3. You can freely modify this software. And the source
+      may be used in any software with no limitation.
+  A-4. When you release a modified version to public, you
+      must publish it with your name.
 
+B. The author is not responsible for any kind of damages or loss
+  while using or misusing this software, which is distributed
+  "AS IS". No warranty of any kind is expressed or implied.
+  You use AT YOUR OWN RISK.
+
+C. Copyrighted to (Jiro and Aquamarine Networks.)
+
+D. Above three clauses are applied both to source and binary
+  form of this software.
+----------------------------------------
+
+
+■Rights
+
+This software includes parts of below projects.
+Theyt are under their licenses. 
 
 また、本ソフトウェアには、下記プロジェクトの一部が含まれています。
 これらについては、それぞれの作者のライセンスに従います。
@@ -71,6 +97,13 @@ Thai and Vietnamese font by Sittiphol Phanvilai(NuuNeoI).
 Crash Report Library & Server by Adamrocker & benishouga.
   http://www.adamrocker.com/blog/288/bug-report-system-for-android.html
   http://aexceptions.appspot.com/
+
+
+■Contacts
+・If you want to contact me (developper) , send message on the blog , mail or Twitter.
+
+・動作報告およびバグレポートは、ブログコメント、メール、Twitterなどでご連絡ください。
+
 
 ---------------------------------------------------------- 
 Copyright (C) 2010, Aquamarine Networks. 
