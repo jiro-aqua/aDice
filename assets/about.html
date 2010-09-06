@@ -28,7 +28,7 @@
     <img alt="icon" src="icon.png" /><span style="font-size: 36pt">aDice</span><br />
     <p id='version' ></p>
     <p id='description' ></p>
-	<a href="http://sites.google.com/site/aquamarinepandora/home/adice" id='manual' ></a>
+    <p id='manual' ></p>
     <br />
     <br />
     Copyright (C) 2010, Jiro and Aquamarine Networks.<br />
@@ -97,15 +97,18 @@
     Thanks to the authors!<br />
     <hr />
     Special thanks to ...<br />
-    &nbsp;qtotter/RZV/gou/いち/おーや/JIK/R'lyeh/saru_radio<br />
+    &nbsp;qtotter/RZV/gou/いち/おーや/JIK/R'lyeh/saru_radio/Yoshi/ICHIRO<br />
 
 	<script type="text/javascript">
-		function setItem( key ){
-			document.getElementById( key ).appendChild(document.createTextNode( jscallback.getAboutStrings( key ) ));
-		}
+	function setItem( key ){
+		document.getElementById( key ).appendChild(document.createTextNode( jscallback.getAboutStrings( key ) ));
+	}
+	function setTag( key ){
+		document.getElementById( key ).innerHTML =  jscallback.getAboutStrings( key ) ;
+	}
 		setItem('version');
 		setItem('description');
-		setItem('manual');
+		setTag('manual');
 	</script>
 </body>
 </html>

@@ -42,7 +42,7 @@
 	<string name="noresulthtml">No result.</string>
 	<string name="morebtn">more</string>
 	<string name="description">aDice is the viewer for dictionaries of PDIC format.</string>
-	<string name="manual">Introduction of aDice.(Japanese) </string>
+	<string name="manual"> &lt;a href=&quot;http://sites.google.com/site/aquamarinepandora/home/adice&quot;&gt;Introduction of aDice.&lt;/a&gt; </string>
 	<string name="about_name">About aDice...</string>
 	<string name="fontsizeindex">Font size of Index</string>
 	<string name="fontsizephone">Font size of Phone</string>

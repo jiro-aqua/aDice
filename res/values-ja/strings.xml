@@ -42,7 +42,7 @@
 	<string name="noresulthtml">一致するものはありませんでした。</string>
 	<string name="morebtn">続きを読む</string>
 	<string name="description">aDiceはPDIC形式の辞書ビューワーです</string>
-	<string name="manual">機能紹介</string>
+	<string name="manual"> &lt;a href=&quot;http://sites.google.com/site/aquamarinepandora/home/adice_ja&quot;&gt;機能紹介&lt;/a&gt; </string>
 	<string name="about_name">aDiceについて</string>
 	<string name="fontsizeindex">見出し語フォントサイズ</string>
 	<string name="fontsizephone">発音記号フォントサイズ</string>
