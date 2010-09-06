@@ -91,5 +91,8 @@
 	<string name="welcome_message">aDiceはPDIC辞書ビューワーです。\n\nPC等でPDIC形式の辞書をお使いの方は、SDカードの適当なフォルダにコピーしてから、「設定」→「辞書追加」を選んでください。\n(PDIC/Unicode最新版で辞書の変換が必要な場合もあります)\n\nまたは、「設定」→「辞書ダウンロード」の画面からフリーの辞書をダウンロードすることもできます。</string>
 	<string name="label_close">閉じる</string>
 	<string name="label_download">辞書ダウンロード</string>
+	<string name="menu_copy_index">見出し語をコピー</string>
+	<string name="menu_copy_all">全文コピー</string>
+	<string name="menu_share">共有</string>
 
 </resources>

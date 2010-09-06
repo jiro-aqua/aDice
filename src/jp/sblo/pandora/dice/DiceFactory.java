@@ -51,8 +51,8 @@ final public class DiceFactory {
 	}
 
 	public static  String convert(CharSequence s){
-		final CharSequence dakuon="、･-ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポァィゥェォャュョッ";
-	  	final CharSequence seion =",・ カキクケコサシスセソタチツテトハヒフヘホハヒフヘホアイウエオヤユヨツ";
+		final CharSequence dakuon="、･-ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポァィゥェォャュョッÀÁÂÃÄÅàáâãäåÆæÇçÈÉÊËèéêëÌÍÎÏìíîïÐðÑñÒÓÔÕÖØòóôõöøŒœÙÚÛÜùúûüÝÞýþÿß";
+	  	final CharSequence seion =",・ カキクケコサシスセソタチツテトハヒフヘホハヒフヘホアイウエオヤユヨツaaaaaaaaaaaaaacceeeeeeeeiiiiiiiiddnnoooooooooooooouuuuuuuuyyyyys";
 
 		s = trimchar(s , " 　" , " 　\"'?.,()[]{}|!");
 

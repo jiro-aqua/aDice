@@ -20,6 +20,7 @@ import jp.sblo.pandora.dice.Idice;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -620,6 +621,77 @@ public class aDiceActivity extends Activity implements DicView.Callback
 			break;
 		}
 	}
+	/**
+	 * DicView#Callbackの実装
+	 */
+	@Override
+	public boolean onDicviewItemLongClicked(int position)
+	{
+
+		final DicView.Data data = (DicView.Data) mAdapter.getItem(position);
+		switch (data.getMode()) {
+		case DicView.Data.MORE:
+			break;
+		case DicView.Data.WORD: {
+			CharSequence[] disps = new CharSequence[]{
+					getString(R.string.menu_copy_index),
+					getString(R.string.menu_copy_all),
+					getString(R.string.menu_share),
+			};
+
+			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which)
+				{
+					// selected dialog list item
+					String all = data.Index.toString() ;
+					if ( data.Trans != null ){
+						all += "\n";
+						all += data.Trans;
+					}
+					if ( data.Sample != null ){
+						all += "\n";
+						all += data.Sample;
+					}
+					all += "\n";
+
+					switch( which ){
+					case 0:		// copy index
+						mClipboardManager.setText(data.Index);
+						break;
+					case 1:		// copy all
+						mClipboardManager.setText( all );
+						break;
+					case 2:
+						{
+							Intent intent = new Intent(Intent.ACTION_SEND);
+							intent.setType("text/plain");
+							intent.putExtra(Intent.EXTRA_TEXT, all );
+							try{
+							  startActivity(intent);
+							}
+							catch (ActivityNotFoundException e) {
+							}
+						}
+						break;
+					}
+
+				}
+			};
+
+			new AlertDialog.Builder(this)
+			.setIcon(R.drawable.icon)
+			.setTitle(data.Index.toString())
+			.setItems(disps, listener)
+			.show();
+		}
+			break;
+		case DicView.Data.NONE:
+		case DicView.Data.NORESULT:
+			break;
+		}
+		return false;
+	}
+
 
 	private void generateDisp(int mode, int dic, IdicResult pr, ArrayList<DicView.Data> result, int pos)
 	{

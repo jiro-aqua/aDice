@@ -61,6 +61,7 @@ public class DicView extends ListView {
 
 	interface Callback {
 		void onDicviewItemClicked(int position);
+		boolean onDicviewItemLongClicked(int position);
 	}
 
 	private Callback mCallback;
@@ -82,6 +83,16 @@ public class DicView extends ListView {
 				if ( mCallback != null ){
 					mCallback.onDicviewItemClicked(position);
 				}
+			}
+		});
+	  	setOnItemLongClickListener( new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent , View view, int position, long id)
+			{
+				if ( mCallback != null ){
+					return mCallback.onDicviewItemLongClicked(position);
+				}
+				return false;
 			}
 		});
 
