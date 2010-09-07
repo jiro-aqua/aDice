@@ -50,6 +50,8 @@ import android.widget.ImageButton;
 public class aDiceActivity extends Activity implements DicView.Callback
 {
 
+	private static final String INTENT_MUSHROOM_REPLACE_KEY = "replace_key";
+	private static final String INTENT_MUSHROOM_ACTION = "com.adamrocker.android.simeji.ACTION_INTERCEPT";
 	private final static String TAG = "aDice";
 	private static String mLast = "";
 	private static Thread mDiceThread = null;
@@ -490,6 +492,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	@Override
 	protected void onResume()
 	{
+		boolean selection=true;
 		super.onResume();
 
 		mLast = "";
@@ -531,6 +534,20 @@ public class aDiceActivity extends Activity implements DicView.Callback
 			Intent.ACTION_SEARCH.equals(it.getAction()) ) {
 			Bundle extras = it.getExtras();
 			text = extras.getString(SearchManager.QUERY);
+
+		}
+
+		// Mushroom検索
+		if (text ==null &&
+			it != null &&
+			INTENT_MUSHROOM_ACTION.equals(it.getAction()) ) {
+			Bundle extras = it.getExtras();
+			text = extras.getString(INTENT_MUSHROOM_REPLACE_KEY);
+			setResult(RESULT_OK,it);
+			selection = false;
+			if ( text.length()==0 ){
+				text = null;
+			}
 		}
 
 		// クリップボード検索
@@ -547,7 +564,9 @@ public class aDiceActivity extends Activity implements DicView.Callback
 				text = text.substring(0, pos);
 			}
 			mEdittext.setText(text);
-			mEdittext.setSelection(0, text.length());
+			if ( selection ){
+				mEdittext.setSelection(0, text.length());
+			}
 		}else{
 			text = mEdittext.getEditableText().toString();
 			searchWord(text);
@@ -643,11 +662,19 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		case DicView.Data.MORE:
 			break;
 		case DicView.Data.WORD: {
-			CharSequence[] disps = new CharSequence[]{
-					getString(R.string.menu_copy_index),
-					getString(R.string.menu_copy_all),
-					getString(R.string.menu_share),
-			};
+			ArrayList<CharSequence> disps = new ArrayList<CharSequence> ();
+			disps.add( getString(R.string.menu_share) );
+			disps.add( getString(R.string.menu_copy_index) );
+			disps.add( getString(R.string.menu_copy_all) );
+
+			// Mushroom検索
+			final Intent it = getIntent();
+			if ( it != null &&
+				INTENT_MUSHROOM_ACTION.equals(it.getAction()) )
+			{
+				disps.add( getString(R.string.menu_mushroom) );
+				disps.add( getString(R.string.menu_mushroom_all) );
+			}
 
 			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which)
@@ -665,13 +692,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 					all += "\n";
 
 					switch( which ){
-					case 0:		// copy index
-						mClipboardManager.setText(data.Index);
-						break;
-					case 1:		// copy all
-						mClipboardManager.setText( all );
-						break;
-					case 2:
+					case 0:
 						{
 							Intent intent = new Intent(Intent.ACTION_SEND);
 							intent.setType("text/plain");
@@ -683,15 +704,28 @@ public class aDiceActivity extends Activity implements DicView.Callback
 							}
 						}
 						break;
+					case 1:		// copy index
+						mClipboardManager.setText(data.Index);
+						break;
+					case 2:		// copy all
+						mClipboardManager.setText( all );
+						break;
+					case 3:		// Mushroom
+						it.putExtra( INTENT_MUSHROOM_REPLACE_KEY, data.Index );
+						finish();
+						break;
+					case 4:		// Mushroom all
+						it.putExtra( INTENT_MUSHROOM_REPLACE_KEY, all );
+						finish();
+						break;
 					}
-
 				}
 			};
 
 			new AlertDialog.Builder(this)
 			.setIcon(R.drawable.icon)
 			.setTitle(data.Index.toString())
-			.setItems(disps, listener)
+			.setItems(disps.toArray(new CharSequence[0]), listener)
 			.show();
 		}
 			break;

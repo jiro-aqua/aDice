@@ -94,5 +94,7 @@
 	<string name="menu_copy_index">見出し語をコピー</string>
 	<string name="menu_copy_all">全文コピー</string>
 	<string name="menu_share">共有</string>
+	<string name="menu_mushroom">見出し語をマッシュルームに入力</string>
+	<string name="menu_mushroom_all">全文をマッシュルームに入力</string>
 
 </resources>

@@ -91,7 +91,9 @@
 	<string name="welcome_message">aDice is a dictionary viewer for PDIC format.\n\nNow you can download FREE dictionaries . ( Settings -> Download Dictionary )\n\nOr put PDIC file on the SD Card , you can use it.</string>
 	<string name="label_close">Close</string>
 	<string name="label_download">Download Now</string>
-	<string name="menu_copy_index">Copy Index</string>
-	<string name="menu_copy_all">Copy All</string>
+	<string name="menu_copy_index">Copy index</string>
+	<string name="menu_copy_all">Copy all</string>
 	<string name="menu_share">Share</string>
+	<string name="menu_mushroom">Set index to Mushroom</string>
+	<string name="menu_mushroom_all">Set all to Mushroom</string>
 </resources>
