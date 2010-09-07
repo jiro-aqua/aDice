@@ -20,6 +20,7 @@ import jp.sblo.pandora.dice.Idice;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -523,6 +524,15 @@ public class aDiceActivity extends Activity implements DicView.Callback
 			Bundle extras = it.getExtras();
 			text = extras.getString(Intent.EXTRA_TEXT);
 		}
+
+		// intentからのデータ取得
+		if (text ==null &&
+			it != null &&
+			Intent.ACTION_SEARCH.equals(it.getAction()) ) {
+			Bundle extras = it.getExtras();
+			text = extras.getString(SearchManager.QUERY);
+		}
+
 		// クリップボード検索
 		if (text == null && set.clipboard ) {
 			CharSequence clip = mClipboardManager.getText();
