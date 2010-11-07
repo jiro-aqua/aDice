@@ -96,5 +96,9 @@
 	<string name="menu_share">共有</string>
 	<string name="menu_mushroom">見出し語をマッシュルームに入力</string>
 	<string name="menu_mushroom_all">全文をマッシュルームに入力</string>
+	<string name="dicname_pdej">PDEJ2005英和辞書</string>
+	<string name="dicname_edict">EDICT和英辞書</string>
+	<string name="dicname_webster">Webster英英辞典1913年版</string>
+	<string name="dicname_ichirofj">ICHIRO f2jdic仏和辞書</string>
 
 </resources>

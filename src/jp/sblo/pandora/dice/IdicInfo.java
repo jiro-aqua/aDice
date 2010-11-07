@@ -42,7 +42,7 @@ public interface IdicInfo {
 	String	GetDicName(  );
 	void	setIrreg( HashMap<String,String> irreg );
 	String	getIrreg( String key );
-	public boolean readIndexBlock( IIndexCacheFile indexcache );
+	public boolean readIndexBlock( );
 
 
 }

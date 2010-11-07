@@ -2,9 +2,7 @@ package jp.sblo.pandora.adice;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -13,7 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jp.sblo.pandora.dice.DiceFactory;
-import jp.sblo.pandora.dice.IIndexCacheFile;
 import jp.sblo.pandora.dice.IdicInfo;
 import jp.sblo.pandora.dice.IdicResult;
 import jp.sblo.pandora.dice.Idice;
@@ -57,7 +54,6 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	private static Thread mDiceThread = null;
 
 	private final Idice mDice = DiceFactory.getInstance();;
-	private final Context mContext = this;
 	private final HashMap<String, String> mIrreg = new HashMap<String, String>();
 
 	private int mDelay = 0;
@@ -127,7 +123,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		final ProgressDialog dialog = new ProgressDialog(this);
 		dialog.setIndeterminate(true);
 		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		dialog.setMessage(mContext.getResources().getString(R.string.loadingdictionarydialog));
+		dialog.setMessage(getResources().getString(R.string.loadingdictionarydialog));
 		dialog.show();
 		// Log.e( TAG , "Dialog Show");
 
@@ -155,7 +151,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		mDicView = (DicView) findViewById(R.id.DicView01);
 		mDicView.setCallback(this);
 		mResultData = new ArrayList<DicView.Data>();
-		mAdapter = new DicView.ResultAdapter(mContext, R.layout.list, R.id.DicView01, mResultData);
+		mAdapter = new DicView.ResultAdapter(this, R.layout.list, R.id.DicView01, mResultData);
 		mDicView.setAdapter(mAdapter);
 
 		mEdittext = (DicEditText) findViewById(R.id.EditText01);
@@ -198,7 +194,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event)
 			{
-				if (keyCode == KeyEvent.KEYCODE_ENTER) {
+				if (keyCode == KeyEvent.KEYCODE_ENTER  && event.getAction() == KeyEvent.ACTION_UP ) {
 					String text = mEdittext.getEditableText().toString();
 					searchWord(text);
 				}
@@ -236,7 +232,10 @@ public class aDiceActivity extends Activity implements DicView.Callback
 							dialog.dismiss();
 
 							if ( SettingsActivity.isVersionUp(thisCtx) ){
-								new AlertDialog.Builder(mContext)
+							    // キャッシュの掃除
+							    FileUtils.removeDirectory(getCacheDir());
+
+								new AlertDialog.Builder(aDiceActivity.this)
 								.setTitle(R.string.welcome_title)
 								.setMessage(R.string.welcome_message)
 								.setNegativeButton(R.string.label_close, new DialogInterface.OnClickListener() {
@@ -275,7 +274,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		mAdapter.notifyDataSetChanged();
 
 		// クラッシュレポートハンドラの設定
-		AndroidExceptionHandler.bind(this, "019749b2-5b96-4c90-b793-7e04cc8d3cc7");
+		AndroidExceptionHandler.bind(getApplicationContext(), "019749b2-5b96-4c90-b793-7e04cc8d3cc7");
 
 		mClipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
@@ -297,26 +296,11 @@ public class aDiceActivity extends Activity implements DicView.Callback
 				if (dicinfo != null) {
 					Log.i(TAG, "Open OK:" + name);
 
-					// インデクスキャッシュファイル名取得
-					final String filename = name.replace("/", ".") + ".idx";
+//					// インデクスキャッシュファイル名取得
+//					final String filename = name.replace("/", ".") + ".idx";
 
 					// インデクス作成
-					if (!dicinfo.readIndexBlock(new IIndexCacheFile() {
-						final String path = getCacheDir() + "/" + filename;
-
-						@Override
-						public FileInputStream getInput() throws FileNotFoundException
-						{
-							return new FileInputStream(path);
-						}
-
-						@Override
-						public FileOutputStream getOutput() throws FileNotFoundException
-						{
-							return new FileOutputStream(path);
-						}
-
-					})) {
+					if (!dicinfo.readIndexBlock()) {
 						mDice.close(dicinfo);
 					} else {
 						SettingsActivity.apllySettings(this, dicinfo);

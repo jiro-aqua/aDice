@@ -1,7 +1,7 @@
 package jp.sblo.pandora.dice;
 
-import java.io.RandomAccessFile;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
@@ -29,6 +29,23 @@ public class IndexCache
 			mBlockSize = 1024;
 		}
 	}
+
+	private byte[] mSegmentData = null;
+	byte[] getSegmentWithoutCache(int segment,int blocksize)
+	{
+        if ( mSegmentData == null ){
+            mSegmentData = new byte[blocksize];
+        }
+        try{
+            mFile.seek(mStart + segment*blocksize );
+            mFile.read(mSegmentData, 0, blocksize );
+        }
+        catch( IOException e ){
+            return null;
+        }
+        return mSegmentData;
+	}
+
 
 	byte[]	getSegment(int segment)
 	{
@@ -185,37 +202,65 @@ public class IndexCache
 	public boolean createIndex(int blockbits ,int nindex ,int[] indexPtr )
 	{
 		// インデックスの先頭から見出し語のポインタを拾っていく
-		int i;
-		int ptr = 0;
-		byte[] segmentdata = getSegment(0);
-		int lastsegment = 0;
+//		int i;
+//		int ptr = 0;
+//		byte[] segmentdata = getSegment(0);
+//		int lastsegment = 0;
 
-		for (i = 0; i < nindex; i++) {
-			ptr += blockbits; // ブロック番号サイズポインタを進める
-			indexPtr[i] = ptr; // 見出し語部分のポインタを保存
+	    int blocksize = 64*1024;
+		int [] params= new int[]{ 0 , 0 , nindex , blocksize , blockbits , 1 , 0 };
 
-			int segment = ptr / mBlockSize;
-			int address = ptr % mBlockSize;
-			if ( segment != lastsegment ){
-				segmentdata = getSegment(segment);
-				lastsegment = segment;
-			}
-			// 見出し語長さ＋\0分進める
-			while (segmentdata[address++] != 0){
-				ptr++;
-				if ( address >= mBlockSize ){
-					address = 0;
-					segmentdata = getSegment(segment+1);
-					lastsegment = segment+1;
-				}
-			}
-			ptr++;
-		}
-		if (i == nindex) { // エラー無しで終われば
-			indexPtr[i] = ptr + blockbits; // ターミネータを入れておく
+		int segment=0;
+
+        while( Natives.countIndexWordsNative( params , getSegmentWithoutCache(segment++,blocksize) ,  indexPtr  ) );
+
+        mSegmentData = null;
+//        while( countIndexWords( params , getSegment(segment++) ,  indexPtr  ) );
+
+		//if (i == nindex) { // エラー無しで終われば
+			indexPtr[params[0]] = params[1] + blockbits; // ターミネータを入れておく
 			return true;
-		}
-		return false;
+		//}
+//		return false;
 	}
+
+/*
+	private boolean countIndexWords( int[] params , byte[] buff ,  int[]indexPtr  )
+	{
+	    int curidx = params[0];
+	    int curptr = params[1];
+	    int max = params[2];
+	    int buffmax = params[3];
+	    int blockbits= params[4];
+	    int found = params[5];
+	    int ignore = params[6];
+
+	    int i=0;
+
+        //
+	    for( ;i<buffmax && curidx < max ;i++ ){
+            if ( ignore > 0 ){
+                ignore--;
+            }else if ( found != 0){
+    	        int ptr = curptr + i + blockbits;  // ブロック番号サイズポインタを進める
+    	        indexPtr[curidx++] = ptr;          // 見出し語部分のポインタを保存
+    	        ignore = blockbits-1;
+    	        found = 0;
+	        }else if ( buff[i]==0 ){
+	            found = 1;
+	        }
+	    }
+
+        params[0] = curidx;
+        params[1] = curptr+i ;
+        params[5] = found ;
+        params[6] = ignore ;
+	    if ( curidx < max ){
+	        return true;
+	    }else{
+	        return false;
+	    }
+	}
+*/
 
 }

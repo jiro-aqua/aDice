@@ -1,14 +1,12 @@
 package jp.sblo.pandora.adice;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.io.File;
 import java.util.List;
 
 import jp.sblo.pandora.adice.FontCache.fontName;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -42,7 +40,6 @@ public class FontManagerActivity extends ListActivity
 
 		loadList();
 
-		final Activity thisAct = this;
 		ListView lv = getListView();
 		lv.setOnItemLongClickListener( new ListView.OnItemLongClickListener( ) {
 			@Override
@@ -51,7 +48,7 @@ public class FontManagerActivity extends ListActivity
 				final String fontname = mFontList.get(position).fontname;
 				final String filename = mFontList.get(position).filename;
 				if ( position < mFontList.size()-1 ){
-					new AlertDialog.Builder(thisAct)
+					new AlertDialog.Builder(FontManagerActivity.this)
 					.setIcon(R.drawable.icon)
 					.setTitle(R.string.remove_font)
 					.setMessage( getResources().getString(R.string.remove_font_confirm, fontname) )
@@ -59,7 +56,7 @@ public class FontManagerActivity extends ListActivity
 
 						public void onClick(DialogInterface dialog, int whichButton) {
 					        // YESの処理
-							new AlertDialog.Builder(thisAct)
+							new AlertDialog.Builder(FontManagerActivity.this)
 							.setTitle(R.string.remove_font)
 							.setMessage( getResources().getString(R.string.remove_font_message, fontname)  )
 							.setPositiveButton(R.string.label_ok, null)

@@ -32,7 +32,6 @@ public class InstallActivity extends Activity
 	public static final String INTENT_ENGLISH = "english";
 	public static final String INTENT_NAME = "name";
 	public static final String INTENT_FILE = "file";
-	private Activity mActivity;
 	private Intent mIntent;
 	private DownloadTask mDlTask;
 	private File SDCARD;
@@ -50,8 +49,6 @@ public class InstallActivity extends Activity
 			return;
 		}
 
-
-		mActivity = this;
 		mIntent = getIntent();
 
 		setResult(RESULT_CANCELED);
@@ -108,7 +105,7 @@ public class InstallActivity extends Activity
 
 		@Override
 		protected void onPreExecute() {
-		    mProgressDialog = new ProgressDialog(mActivity);
+		    mProgressDialog = new ProgressDialog(InstallActivity.this);
 		    mProgressDialog.setTitle(R.string.download_process);
 		    mProgressDialog.setIndeterminate(true);
 		    mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -130,11 +127,11 @@ public class InstallActivity extends Activity
 		    mProgressDialog.dismiss();
 
 		    if (result != null) {
-		        Toast.makeText(mActivity,R.string.download_ok, Toast.LENGTH_LONG).show();
+		        Toast.makeText(InstallActivity.this,R.string.download_ok, Toast.LENGTH_LONG).show();
 			    mIntent.putExtra(FileSelectorActivity.INTENT_FILEPATH, result);
 				setResult(RESULT_OK , mIntent);
 		    } else {
-		        Toast.makeText(mActivity,R.string.download_ng, Toast.LENGTH_LONG).show();
+		        Toast.makeText(InstallActivity.this,R.string.download_ng, Toast.LENGTH_LONG).show();
 		    }
 		    mDlTask = null;
 			finish();

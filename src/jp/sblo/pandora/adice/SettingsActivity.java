@@ -1,13 +1,13 @@
 package jp.sblo.pandora.adice;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jp.sblo.pandora.dice.DiceFactory;
+import jp.sblo.pandora.dice.IdicInfo;
+import jp.sblo.pandora.dice.Idice;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -25,13 +25,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.Preference.OnPreferenceChangeListener;
-//import android.util.Log;
 import android.widget.Toast;
-
-import jp.sblo.pandora.dice.DiceFactory;
-import jp.sblo.pandora.dice.IIndexCacheFile;
-import jp.sblo.pandora.dice.IdicInfo;
-import jp.sblo.pandora.dice.Idice;
 
 public class SettingsActivity extends PreferenceActivity implements OnPreferenceChangeListener {
 
@@ -76,10 +70,14 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		}
 	}
 	private final static DicTemplate DICNTEMPLATE[]={
-		new DicTemplate( "/EIJI-([0-9]+).*\\.DIC",	     R.string.dicname_eijiro,	     true ),
-		new DicTemplate( "/WAEI-([0-9]+).*\\.DIC",       R.string.dicname_waeijiro,      false),
-		new DicTemplate( "/REIJI([0-9]+).*\\.DIC",       R.string.dicname_reijiro,       false),
-		new DicTemplate( "/RYAKU([0-9]+).*\\.DIC",       R.string.dicname_ryakujiro,     false),
+		new DicTemplate( "/EIJI-([0-9]+)U?.*\\.DIC",	   R.string.dicname_eijiro,	       true ),
+		new DicTemplate( "/WAEI-([0-9]+)U?.*\\.DIC",       R.string.dicname_waeijiro,      false),
+		new DicTemplate( "/REIJI([0-9]+)U?.*\\.DIC",       R.string.dicname_reijiro,       false),
+		new DicTemplate( "/RYAKU([0-9]+)U?.*\\.DIC",       R.string.dicname_ryakujiro,     false),
+        new DicTemplate( "/PDEJ2005U?.dic",                R.string.dicname_pdej,          true),
+        new DicTemplate( "/PDEDICTU?.dic",                 R.string.dicname_edict,         false),
+        new DicTemplate( "/PDWD1913U?.dic",                R.string.dicname_webster,       true),
+        new DicTemplate( "/f2jdic.dic",                    R.string.dicname_ichirofj,      false),
 	};
 
 
@@ -89,7 +87,6 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	private final static int REQUEST_CODE_ADDDIC = 0x1234;
 	private final static int REQUEST_CODE_FONTSETTINGS = 0x1237;
 	public final static String EXTRA_DLNOW = "DownloadNow";
-	private final Context mContext = this;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +120,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 				final ProgressDialog dialog = new ProgressDialog(this);
 		        dialog.setIndeterminate(true);
 		        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		        dialog.setMessage(mContext.getResources().getString(R.string.createindexdialog));
+		        dialog.setMessage(getResources().getString(R.string.createindexdialog));
 		        dialog.show();
 
 		        new Thread(){
@@ -134,27 +131,15 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 						final IdicInfo dicinfo = mDice.open(dicname);
 						if (dicinfo != null) {
 							// 登録成功ならば
-							// インデクスキャッシュファイル名取得
-							final String filename = dicname.replace("/", ".") + ".idx";
+//							// インデクスキャッシュファイル名取得
+//							final String filename = dicname.replace("/", ".") + ".idx";
 
 							// インデクス作成
-							if (! dicinfo.readIndexBlock(new IIndexCacheFile() {
-								final  String path =getCacheDir() + "/"  + filename;
-								@Override
-								public FileInputStream getInput() throws FileNotFoundException
-								{
-									return new FileInputStream( path );
-								}
-								@Override
-								public FileOutputStream getOutput() throws FileNotFoundException
-								{
-									return new FileOutputStream( path );
-								}
-							})) {
+							if (! dicinfo.readIndexBlock()) {
 								mDice.close( dicinfo );
 							}else{
 								failed = false;
-								setDefaultSettings(mContext, dicinfo , defname , english );
+								setDefaultSettings(SettingsActivity.this, dicinfo , defname , english );
 							}
 						}
 
@@ -170,12 +155,12 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 									createDictionaryPreference();
 
 									;
-									Toast.makeText(mContext,
-											mContext.getResources().getString(R.string.toastadded, dicname ) ,
+									Toast.makeText(SettingsActivity.this,
+											getResources().getString(R.string.toastadded, dicname ) ,
 											Toast.LENGTH_LONG).show();
 								} else {
-									Toast.makeText(mContext,
-											mContext.getResources().getString(R.string.toasterror , dicname ) ,
+									Toast.makeText(SettingsActivity.this,
+											getResources().getString(R.string.toasterror , dicname ) ,
 											Toast.LENGTH_LONG).show();
 								}
 								finish();
@@ -239,8 +224,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 				// インデクスファイル削除
 				new File( filename ).delete();
 
-				Toast.makeText(mContext,
-						mContext.getResources().getString(R.string.toastremoved , key ) ,
+				Toast.makeText(SettingsActivity.this,
+						getResources().getString(R.string.toastremoved , key ) ,
 						Toast.LENGTH_LONG).show();
 
 			}
@@ -632,11 +617,16 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 
 			// 辞書名自動判定
 			for( int i=0;i<DICNTEMPLATE.length ;i++ ){
-				Pattern p = Pattern.compile( DICNTEMPLATE[i].pattern );
+				Pattern p = Pattern.compile( DICNTEMPLATE[i].pattern , Pattern.CASE_INSENSITIVE );
 				Matcher m = p.matcher(name);
 				if ( m.find() ){
-					String edt = m.group(1);
-					String dicname = context.getResources().getString(DICNTEMPLATE[i].resourceDicname , edt );
+                    String dicname;
+				    if ( m.groupCount() > 0){
+				        String edt = m.group(1);
+					    dicname = context.getResources().getString(DICNTEMPLATE[i].resourceDicname , edt );
+					}else{
+					    dicname = context.getResources().getString(DICNTEMPLATE[i].resourceDicname );
+					}
 					editor.putString( name +KEY_DICNAME , dicname	);
 		 			editor.putBoolean(name + KEY_ENGLISH , DICNTEMPLATE[i].englishFlag ) ;
 				}
@@ -721,7 +711,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		int lastversion = sp.getInt(KEY_LASTVERSION, 0 );
 		int versioncode;
 		try {
-			versioncode = ctx.getPackageManager().getPackageInfo("jp.sblo.pandora.adice", 0).versionCode;
+		    String pkgname = ctx.getApplicationInfo().packageName;
+			versioncode = ctx.getPackageManager().getPackageInfo(pkgname, 0).versionCode;
 			ret = (lastversion != versioncode);
 
 			if ( ret ){

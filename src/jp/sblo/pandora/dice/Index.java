@@ -3,10 +3,8 @@
  */
 package jp.sblo.pandora.dice;
 
-import java.io.FileInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -192,7 +190,7 @@ class Index implements IdicInfo
 	 * @return
 	 */
 	@Override
-	public boolean readIndexBlock( IIndexCacheFile indexcache )
+	public boolean readIndexBlock( )
 	{
 		boolean ret = false;
 
@@ -224,41 +222,41 @@ class Index implements IdicInfo
 ////						catch( IOException e ){
 ////						}
 //
-					if ( indexcache != null ){
-						try {
-							FileInputStream fis = indexcache.getInput();
-							final byte[]	buff = new byte[ (m_nindex+1) *  4 ];
-							final int readlen = fis.read( buff ) ;
-							fis.close();
-
-							if ( readlen == buff.length ){
-								final int indexlen = m_nindex;
-								final int[] indexptr = mIndexPtr = new int[m_nindex+1];
-	//							Log.e(TAG, "Loading from index from cache");
-								int ptr =0;
-								for( int i=0;i <= indexlen ;i++ ){
-									int b;
-									int dat=0;
-									b = buff[ptr++];
-									b &= 0xFF;
-									dat = b;
-									b = buff[ptr++];
-									b &= 0xFF;
-									dat |= (b<<8);
-									b = buff[ptr++];
-									b &= 0xFF;
-									dat |= (b<<16);
-									b = buff[ptr++];
-									b &= 0xFF;
-									dat |= (b<<24);
-									indexptr[i] = dat;
-								}
-								ret = true;
-//								Log.e(TAG, "Loaded from index from cache");
-							}
-						}
-						catch( IOException e){
-						}
+//					if ( indexcache != null ){
+//						try {
+//							FileInputStream fis = indexcache.getInput();
+//							final byte[]	buff = new byte[ (m_nindex+1) *  4 ];
+//							final int readlen = fis.read( buff ) ;
+//							fis.close();
+//
+//							if ( readlen == buff.length ){
+//								final int indexlen = m_nindex;
+//								final int[] indexptr = mIndexPtr = new int[m_nindex+1];
+//	//							Log.e(TAG, "Loading from index from cache");
+//								int ptr =0;
+//								for( int i=0;i <= indexlen ;i++ ){
+//									int b;
+//									int dat=0;
+//									b = buff[ptr++];
+//									b &= 0xFF;
+//									dat = b;
+//									b = buff[ptr++];
+//									b &= 0xFF;
+//									dat |= (b<<8);
+//									b = buff[ptr++];
+//									b &= 0xFF;
+//									dat |= (b<<16);
+//									b = buff[ptr++];
+//									b &= 0xFF;
+//									dat |= (b<<24);
+//									indexptr[i] = dat;
+//								}
+//								ret = true;
+////								Log.e(TAG, "Loaded from index from cache");
+//							}
+//						}
+//						catch( IOException e){
+//						}
 //						// TODO:読む時に不一致でエラーが出た時どうなるか対策が必要
 					}
 
@@ -270,34 +268,34 @@ class Index implements IdicInfo
 						final int nindex = m_nindex;
 						final int [] indexPtr = mIndexPtr = new int[nindex + 1]; // インデックスポインタの配列確保
 						ret = mIndexCache.createIndex(m_blockbits, nindex, indexPtr);
-						if ( ret ){
-//							Log.e(TAG, "Create index complete");
-
-							byte[] buff = new byte[indexPtr.length*4];
-							int p=0;
-							for( int c=0;c<=nindex;c++ ){
-								int	data = indexPtr[c];
-								buff[p++] = (byte)(data&0xFF);	data >>= 8;
-								buff[p++] = (byte)(data&0xFF);	data >>= 8;
-								buff[p++] = (byte)(data&0xFF);	data >>= 8;
-								buff[p++] = (byte)(data&0xFF);
-							}
-
-							// インデクスをファイルキャッシュに書込
-							if ( indexcache!=null ){
-								try {
-									FileOutputStream fos = indexcache.getOutput();
-									fos.write(buff , 0, buff.length );
-									fos.close();
-	//								Log.e(TAG, "Wrote index to cache file");
-					            } catch (IOException e) {
-	//								Log.e(TAG, "Couldn't write index to cache file");
-					            }
-							}
-						}
+//						if ( ret ){
+////							Log.e(TAG, "Create index complete");
+//
+//							byte[] buff = new byte[indexPtr.length*4];
+//							int p=0;
+//							for( int c=0;c<=nindex;c++ ){
+//								int	data = indexPtr[c];
+//								buff[p++] = (byte)(data&0xFF);	data >>= 8;
+//								buff[p++] = (byte)(data&0xFF);	data >>= 8;
+//								buff[p++] = (byte)(data&0xFF);	data >>= 8;
+//								buff[p++] = (byte)(data&0xFF);
+//							}
+//
+//							// インデクスをファイルキャッシュに書込
+//							if ( indexcache!=null ){
+//								try {
+//									FileOutputStream fos = indexcache.getOutput();
+//									fos.write(buff , 0, buff.length );
+//									fos.close();
+//	//								Log.e(TAG, "Wrote index to cache file");
+//					            } catch (IOException e) {
+//	//								Log.e(TAG, "Couldn't write index to cache file");
+//					            }
+//							}
+//						}
 						// エラーがあれば、OutOfBoundsでcatchされるはず
 					}
-				}
+//				}
 //			} catch (IOException e) {
 //				e.printStackTrace();
 //			}
