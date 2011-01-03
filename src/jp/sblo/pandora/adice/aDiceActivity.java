@@ -274,7 +274,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		mAdapter.notifyDataSetChanged();
 
 		// クラッシュレポートハンドラの設定
-		AndroidExceptionHandler.bind(getApplicationContext(), "019749b2-5b96-4c90-b793-7e04cc8d3cc7");
+		AndroidExceptionHandler.bind(this, "019749b2-5b96-4c90-b793-7e04cc8d3cc7");
 
 		mClipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
