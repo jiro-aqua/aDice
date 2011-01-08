@@ -70,6 +70,7 @@
 	<string name="label_ok">OK</string>
 	<string name="label_yes">Yes</string>
 	<string name="label_no">No</string>
+	<string name="label_cancel">Cancel</string>
 	<string name="remove_font">Remove font</string>
 	<string name="remove_font_message">%s has been removed.</string>
 	<string name="remove_font_confirm">Do you remove the font?\n%s</string>
@@ -100,4 +101,6 @@
 	<string name="dicname_edict">EDICT Japanese-English Dictionary</string>
 	<string name="dicname_webster">Webster English Dictionary 1913</string>
 	<string name="dicname_ichirofj">ICHIRO French-Japanese Dictionary</string>
+	<string name="menu_add_wordlist">Add to Wordbook</string>
+	<string name="add_wordlist_msg">You need the \"TanGo Wordbook\" Application.\nDo you want to download now？</string>
 </resources>

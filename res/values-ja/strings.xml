@@ -70,6 +70,7 @@
 	<string name="label_ok">OK</string>
 	<string name="label_yes">はい</string>
 	<string name="label_no">いいえ</string>
+	<string name="label_cancel">キャンセル</string>
 	<string name="remove_font">フォント削除</string>
 	<string name="remove_font_message">「%s」は削除されました</string>
 	<string name="remove_font_confirm">「%s」を削除しますか？</string>
@@ -100,5 +101,6 @@
 	<string name="dicname_edict">EDICT和英辞書</string>
 	<string name="dicname_webster">Webster英英辞典1913年版</string>
 	<string name="dicname_ichirofj">ICHIRO f2jdic仏和辞書</string>
-
+	<string name="menu_add_wordlist">単語帳に登録</string>
+	<string name="add_wordlist_msg">単語帳として「TanGo単語帳」が必要です。\n今すぐダウンロードしますか？</string>
 </resources>

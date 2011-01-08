@@ -27,6 +27,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
@@ -637,89 +639,102 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	/**
 	 * DicView#Callbackの実装
 	 */
-	@Override
-	public boolean onDicviewItemLongClicked(int position)
-	{
+    @Override
+    public boolean onDicviewItemLongClicked(int position) {
+        boolean mushroom = false;
+        final DicView.Data data = (DicView.Data)mAdapter.getItem(position);
+        switch (data.getMode()) {
+            case DicView.Data.MORE:
+                break;
+            case DicView.Data.WORD: {
+                ArrayList<CharSequence> disps = new ArrayList<CharSequence>();
+                disps.add(getString(R.string.menu_share));
+                disps.add(getString(R.string.menu_copy_index));
+                disps.add(getString(R.string.menu_copy_all));
 
-		final DicView.Data data = (DicView.Data) mAdapter.getItem(position);
-		switch (data.getMode()) {
-		case DicView.Data.MORE:
-			break;
-		case DicView.Data.WORD: {
-			ArrayList<CharSequence> disps = new ArrayList<CharSequence> ();
-			disps.add( getString(R.string.menu_share) );
-			disps.add( getString(R.string.menu_copy_index) );
-			disps.add( getString(R.string.menu_copy_all) );
+                // Mushroom検索
+                final Intent it = getIntent();
+                if (it != null && INTENT_MUSHROOM_ACTION.equals(it.getAction())) {
+                    mushroom = true;
+                    disps.add(getString(R.string.menu_mushroom));
+                    disps.add(getString(R.string.menu_mushroom_all));
+                }
 
-			// Mushroom検索
-			final Intent it = getIntent();
-			if ( it != null &&
-				INTENT_MUSHROOM_ACTION.equals(it.getAction()) )
-			{
-				disps.add( getString(R.string.menu_mushroom) );
-				disps.add( getString(R.string.menu_mushroom_all) );
-			}
+                // Ecliar(2.1upd1) or lator
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR_MR1) {
+                    disps.add(getString(R.string.menu_add_wordlist));
+                }
+                final boolean mushroom_enable = mushroom;
 
-			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which)
-				{
-					// selected dialog list item
-					String all = data.Index.toString() ;
-					if ( data.Trans != null ){
-						all += "\n";
-						all += data.Trans;
-					}
-					if ( data.Sample != null ){
-						all += "\n";
-						all += data.Sample;
-					}
-					all += "\n";
+                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // selected dialog list item
+                        String all = data.Index.toString();
+                        if (data.Trans != null) {
+                            all += "\n";
+                            all += data.Trans;
+                        }
+                        if (data.Sample != null) {
+                            all += "\n";
+                            all += data.Sample;
+                        }
+                        all += "\n";
 
-					switch( which ){
-					case 0:
-						{
-							Intent intent = new Intent(Intent.ACTION_SEND);
-							intent.setType("text/plain");
-							intent.putExtra(Intent.EXTRA_TEXT, all );
-							try{
-							  startActivity(intent);
-							}
-							catch (ActivityNotFoundException e) {
-							}
-						}
-						break;
-					case 1:		// copy index
-						mClipboardManager.setText(data.Index);
-						break;
-					case 2:		// copy all
-						mClipboardManager.setText( all );
-						break;
-					case 3:		// Mushroom
-						it.putExtra( INTENT_MUSHROOM_REPLACE_KEY, data.Index );
-						finish();
-						break;
-					case 4:		// Mushroom all
-						it.putExtra( INTENT_MUSHROOM_REPLACE_KEY, all );
-						finish();
-						break;
-					}
-				}
-			};
+                        switch (which) {
+                            case 0: {
+                                Intent intent = new Intent(Intent.ACTION_SEND);
+                                intent.setType("text/plain");
+                                intent.putExtra(Intent.EXTRA_TEXT, all);
+                                try {
+                                    startActivity(intent);
+                                } catch (ActivityNotFoundException e) {
+                                }
+                            }
+                                break;
+                            case 1: // copy index
+                                mClipboardManager.setText(data.Index);
+                                break;
+                            case 2: // copy all
+                                mClipboardManager.setText(all);
+                                break;
+                        }
+                        if (mushroom_enable) {
+                            switch (which) {
+                                case 3: // Mushroom
+                                    it.putExtra(INTENT_MUSHROOM_REPLACE_KEY, data.Index);
+                                    finish();
+                                    break;
+                                case 4: // Mushroom all
+                                    it.putExtra(INTENT_MUSHROOM_REPLACE_KEY, all);
+                                    finish();
+                                    break;
+                                case 5:
+                                    addWordBook(data.Index.toString(), data.Trans.toString());
+                                    break;
+                            }
+                        } else {
+                            switch (which) {
+                                case 3:
+                                    addWordBook(data.Index.toString(), data.Trans.toString());
+                                    break;
+                            }
 
-			new AlertDialog.Builder(this)
-			.setIcon(R.drawable.icon)
-			.setTitle(data.Index.toString())
-			.setItems(disps.toArray(new CharSequence[0]), listener)
-			.show();
-		}
-			break;
-		case DicView.Data.NONE:
-		case DicView.Data.NORESULT:
-			break;
-		}
-		return false;
-	}
+                        }
+                    }
 
+                };
+
+                new AlertDialog.Builder(this).setIcon(R.drawable.icon).setTitle(
+                        data.Index.toString()).setItems(disps.toArray(new CharSequence[0]),
+                        listener).show();
+            }
+                break;
+            case DicView.Data.NONE:
+            case DicView.Data.NORESULT:
+                break;
+        }
+        return false;
+    }
 
 	private void generateDisp(int mode, int dic, IdicResult pr, ArrayList<DicView.Data> result, int pos)
 	{
@@ -879,5 +894,29 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		}
 	}
 
+    private void addWordBook(String string, String string2) {
+        Intent intent = new Intent();
+        intent.setAction("noguchi.tango.action.add");
+        intent.putExtra("question", string);
+        intent.putExtra("answers", string2 );
+        try{
+            startActivity(intent);
+        }catch( ActivityNotFoundException e){
+            new AlertDialog.Builder(this)
+            .setTitle(R.string.about_name)
+            .setIcon(R.drawable.icon)
+            .setMessage( getString(R.string.add_wordlist_msg) )
+            .setPositiveButton(R.string.label_ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse("market://details?id=noguchi.tango") );
+                    startActivity( intent );
+                }
+            })
+            .setNegativeButton(R.string.label_cancel, null )
+            .show();
+
+        }
+    }
 
 }
