@@ -184,16 +184,33 @@ public class IndexCache
 
 		if ( segmentdata == null ) return -1;
 
+		if ( len < 0 ){
+		    return 1;
+		}
+
 		if ( address + len < mBlockSize ){
+//	        String test = Index.decodetoCharBuffer(Charset.forName("BOCU-1"), segmentdata , address , len).toString();
+//	        Log.e( "==========================>"+"("+ptr+")" , test );
 			return compareArrayAsUnsigned( aa , pa , la , segmentdata , address , len );
 		}else{
 			int lena = mBlockSize - address;
-			int ret = compareArrayAsUnsigned( aa , pa , la , segmentdata , address , lena );
+			int leno = la;
+			if ( la >= lena ){
+			    leno = lena;
+			}
+			int ret = compareArrayAsUnsigned( aa , pa , leno , segmentdata , address , lena );
+//	        String test = Index.decodetoCharBuffer(Charset.forName("BOCU-1"), segmentdata , address , lena).toString();
+//	        Log.e( "=========================->" , test );
 			if ( ret != 0 ){
 				return ret;
 			}
+			if ( la < lena ){
+			    return -1;
+			}
 			address = 0;
 			segmentdata = getSegment(segment++);
+//	         test = Index.decodetoCharBuffer(Charset.forName("BOCU-1"), segmentdata , address , len-lena).toString();
+//	        Log.e( "=========================+>" , test );
 			return compareArrayAsUnsigned( aa , pa+lena , la-lena , segmentdata , address , len-lena );
 		}
 	}

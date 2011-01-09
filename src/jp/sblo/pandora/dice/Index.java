@@ -127,7 +127,7 @@ class Index implements IdicInfo
 	/**
 	 * byte配列の本文文字列をCharBufferに変換する
 	 */
-	static protected CharBuffer decodetoCharBuffer(Charset cs, byte[] array, int pos, int len)
+	static public CharBuffer decodetoCharBuffer(Charset cs, byte[] array, int pos, int len)
 	{
 		return cs.decode(ByteBuffer.wrap(array, pos, len));
 	}
@@ -151,7 +151,7 @@ class Index implements IdicInfo
 	public int searchIndexBlock(String word)
 	{
 		int min = 0;
-		int max = m_nindex;
+		int max = m_nindex-1;
 
 		ByteBuffer __word = mEncodeCache.get(word);
 		if ( __word==null  ){
@@ -174,6 +174,7 @@ class Index implements IdicInfo
 			final int look = (min + max) / 2;
 			final int len = indexPtr[look + 1] - indexPtr[look] - blockbits;
 			final int comp = indexCache.compare( _word, 0, _wordlen, indexPtr[look], len);
+//			Log.e( "==========================>look",""+look);
 			if ( comp < 0 ) {
 				max = look;
 			} else if ( comp > 0 ){
@@ -1106,7 +1107,7 @@ class Index implements IdicInfo
 					;
 
 //		String test = decodetoCharBuffer(mMainCharset, compbuff, 0, complen).toString();
-//		Log.e( TAG , test );
+//		Log.e( "==========================>" , test );
 				// 見出し語の方が短ければ不一致
 				if (complen < wordlen) {
 					continue;

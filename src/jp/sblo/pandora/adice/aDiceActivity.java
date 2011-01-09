@@ -270,6 +270,18 @@ public class aDiceActivity extends Activity implements DicView.Callback
 					});
 //				} catch (InterruptedException e) {
 //				}
+//				try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                runOnUiThread(new Runnable(){
+//
+//                    @Override
+//                    public void run() {
+//                        new TestTask().execute(0);
+//                    }
+//                });
 			}
 		}.start();
 		generateDisp(DISP_MODE_START, 0, null, mResultData, -1);
@@ -918,5 +930,48 @@ public class aDiceActivity extends Activity implements DicView.Callback
 
         }
     }
+
+// for test
+//    class TestTask extends AsyncTask<Integer,Integer,Integer>{
+//
+//        @Override
+//        protected Integer doInBackground(Integer... arg0) {
+//            try {
+//                BufferedReader br = new BufferedReader( new InputStreamReader( new FileInputStream( new File( Environment.getExternalStorageDirectory() + "/waei121.txt" )) , "UTF-8" ) , 65536 );
+//                BufferedWriter bw = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( new File( Environment.getExternalStorageDirectory() + "/waei121r.txt" ) ), Charset.forName("UTF-8") ) , 65536 );
+//
+//                Log.e( "===================================================start" , "start");
+//                String line;
+//                mDice.getDicInfo(0).SetSearchMax(1);
+//                while( (line = br.readLine()) != null ){
+//                    CharSequence cs = line;//DiceFactory.convert(line);
+//                    if (cs.length() > 0) {
+//                        mDice.search(0, cs.toString());
+//                        IdicResult pr = mDice.getResult(0);
+//                        if ( pr.getCount() == 0 ){
+//                            bw.write(line);
+//                            bw.write('\n');
+//                            Log.e( "===================================================error" , line);
+//                        }
+//
+//                    }
+//                }
+//                br.close();
+//                bw.close();
+//                Log.e( "===================================================end" , "end");
+//
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                // TODO 自動生成された catch ブロック
+//                e.printStackTrace();
+//            }
+//
+//            return null;
+//        }
+//
+//    }
 
 }
