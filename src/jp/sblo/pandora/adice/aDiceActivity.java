@@ -82,11 +82,15 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	private static int LONG_PRESS_DELAY = 500;// msec
 	private Handler mHandler = new Handler();
 	private boolean registLongPress = false;
+	private boolean mExitFlag = false;
+
 	private final Runnable mLongPressAction = new Runnable() {
 		@Override
 		public void run()
 		{
-			finish();
+		    if ( registLongPress ){
+		        mExitFlag=true;
+		    }
 		}
 	};
 	private final FontCache mFontCache = FontCache.getInstance();
@@ -270,6 +274,18 @@ public class aDiceActivity extends Activity implements DicView.Callback
 					});
 //				} catch (InterruptedException e) {
 //				}
+//				try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                runOnUiThread(new Runnable(){
+//
+//                    @Override
+//                    public void run() {
+//                        new TestTask().execute(0);
+//                    }
+//                });
 			}
 		}.start();
 		generateDisp(DISP_MODE_START, 0, null, mResultData, -1);
@@ -835,15 +851,15 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (event.getRepeatCount() == 0 && mSearchHistory.size() > 0) {
-				return true;
-			}
-			synchronized (this) {
-				if (!registLongPress) {
-					registLongPress = true;
-					mHandler.postDelayed(mLongPressAction, LONG_PRESS_DELAY);
-				}
-			}
+            if ( mSearchHistory.size() > 0 ) {
+                synchronized (this) {
+                    if (!registLongPress) {
+                        registLongPress = true;
+                        mHandler.postDelayed(mLongPressAction, LONG_PRESS_DELAY);
+                    }
+                }
+                return true;
+            }
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -852,12 +868,15 @@ public class aDiceActivity extends Activity implements DicView.Callback
 	public boolean onKeyUp(int keyCode, KeyEvent event)
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+		    if ( mExitFlag ){ // 長押しの後のKEYUP
+		        finish();
+		    }
 			// 短押し
-			searchBackword();
 			synchronized (this) {
 				registLongPress = false;
 				mHandler.removeCallbacks(mLongPressAction);
 			}
+            searchBackword();
 			return true; // prevent back button action
 		}
 		return super.onKeyUp(keyCode, event);
@@ -918,5 +937,48 @@ public class aDiceActivity extends Activity implements DicView.Callback
 
         }
     }
+
+// for test
+//    class TestTask extends AsyncTask<Integer,Integer,Integer>{
+//
+//        @Override
+//        protected Integer doInBackground(Integer... arg0) {
+//            try {
+//                BufferedReader br = new BufferedReader( new InputStreamReader( new FileInputStream( new File( Environment.getExternalStorageDirectory() + "/waei121.txt" )) , "UTF-8" ) , 65536 );
+//                BufferedWriter bw = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( new File( Environment.getExternalStorageDirectory() + "/waei121r.txt" ) ), Charset.forName("UTF-8") ) , 65536 );
+//
+//                Log.e( "===================================================start" , "start");
+//                String line;
+//                mDice.getDicInfo(0).SetSearchMax(1);
+//                while( (line = br.readLine()) != null ){
+//                    CharSequence cs = line;//DiceFactory.convert(line);
+//                    if (cs.length() > 0) {
+//                        mDice.search(0, cs.toString());
+//                        IdicResult pr = mDice.getResult(0);
+//                        if ( pr.getCount() == 0 ){
+//                            bw.write(line);
+//                            bw.write('\n');
+//                            Log.e( "===================================================error" , line);
+//                        }
+//
+//                    }
+//                }
+//                br.close();
+//                bw.close();
+//                Log.e( "===================================================end" , "end");
+//
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                // TODO 自動生成された catch ブロック
+//                e.printStackTrace();
+//            }
+//
+//            return null;
+//        }
+//
+//    }
 
 }
