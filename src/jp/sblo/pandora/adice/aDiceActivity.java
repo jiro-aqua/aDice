@@ -725,13 +725,13 @@ public class aDiceActivity extends Activity implements DicView.Callback
                                     finish();
                                     break;
                                 case 5:
-                                    addWordBook(data.Index.toString(), data.Trans.toString());
+                                    addWordBook(data.Index, data.Trans,data.Phone, data.Sample);
                                     break;
                             }
                         } else {
                             switch (which) {
                                 case 3:
-                                    addWordBook(data.Index.toString(), data.Trans.toString());
+                                    addWordBook(data.Index, data.Trans,data.Phone, data.Sample);
                                     break;
                             }
 
@@ -913,11 +913,18 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		}
 	}
 
-    private void addWordBook(String string, String string2) {
+    private void addWordBook(CharSequence index, CharSequence trans,CharSequence phone,CharSequence sample) {
         Intent intent = new Intent();
         intent.setAction("noguchi.tango.action.add");
-        intent.putExtra("question", string);
-        intent.putExtra("answers", string2 );
+        intent.putExtra("question", index);
+        intent.putExtra("answers", trans );
+        if ( phone != null ){
+            intent.putExtra("phone", phone);
+        }
+        if ( sample != null ){
+            intent.putExtra("sample", sample );
+        }
+
         try{
             startActivity(intent);
         }catch( ActivityNotFoundException e){

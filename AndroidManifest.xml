@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="jp.sblo.pandora.adice"
-	android:versionCode="17"
-	android:versionName="0.2.3"
+	android:versionCode="18"
+	android:versionName="0.2.4"
 	android:installLocation="preferExternal"
 	>
 	<application
