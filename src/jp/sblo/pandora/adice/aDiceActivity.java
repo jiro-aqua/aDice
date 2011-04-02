@@ -522,13 +522,14 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		// intentからのデータ取得
 		Intent it = getIntent();
 		String text = null;
-		if (it != null && (
-				Intent.ACTION_SEND.equals(it.getAction()) ||
-				"jp.sblo.pandora.adice.action.SEARCH".equals(it.getAction())
-			) && "text/plain".equals(it.getType())) {
-			Bundle extras = it.getExtras();
-			text = extras.getString(Intent.EXTRA_TEXT);
-		}
+
+        // intentからのデータ取得
+        if (text ==null &&
+            it != null &&
+            Intent.ACTION_SEND.equals(it.getAction()) ) {
+            Bundle extras = it.getExtras();
+            text = extras.getString(Intent.EXTRA_TEXT);
+        }
 
 		// intentからのデータ取得
 		if (text ==null &&

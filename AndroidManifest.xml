@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="jp.sblo.pandora.adice"
-	android:versionCode="18"
-	android:versionName="0.2.4"
+	android:versionCode="19"
+	android:versionName="0.2.5"
 	android:installLocation="preferExternal"
 	>
 	<application
@@ -18,13 +18,11 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-	<!--
 			<intent-filter>
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<data android:mimeType="text/plain" />
 			</intent-filter>
-	-->
 			<intent-filter>
 				<action android:name="jp.sblo.pandora.adice.action.SEARCH" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -39,6 +37,7 @@
 		        <category android:name="com.adamrocker.android.simeji.REPLACE" />
 		        <category android:name="android.intent.category.DEFAULT" />
 		    </intent-filter>
+
 		</activity>
 		<activity android:name=".SettingsActivity" android:label="@string/setting_name">
 		</activity>
