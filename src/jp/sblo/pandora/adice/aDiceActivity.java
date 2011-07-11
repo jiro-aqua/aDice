@@ -556,9 +556,11 @@ public class aDiceActivity extends Activity implements DicView.Callback
 		// クリップボード検索
 		if (text == null && set.clipboard ) {
 			CharSequence clip = mClipboardManager.getText();
-			if (mLastClipboard == null || !mLastClipboard.equals(clip)) {
-				text = clip.toString();
-				mLastClipboard = clip;
+			if ( clip != null ){
+    			if (mLastClipboard == null || !mLastClipboard.equals(clip)) {
+    				text = clip.toString();
+    				mLastClipboard = clip;
+    			}
 			}
 		}
 		if (text != null) {
