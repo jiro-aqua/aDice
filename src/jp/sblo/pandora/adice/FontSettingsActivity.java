@@ -111,7 +111,7 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 			final PreferenceCategory catfont = new PreferenceCategory(this);
 			catfont.setTitle(R.string.fonttitle);
 			mPs.addPreference(catfont);
-			if ( Build.VERSION.SDK.compareTo("4") >= 0 )			{
+			if ( Build.VERSION.SDK_INT >= 4 )			{
 				// インデックスフォント設定
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name +KEY_INDEXFONT);
@@ -133,7 +133,7 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 				pr.setOnPreferenceChangeListener(this);
 				catfont.addPreference(pr);
 			}
-			if ( Build.VERSION.SDK.compareTo("4") >= 0 ){
+			if ( Build.VERSION.SDK_INT >= 4 )			{
 				// 本文フォント設定
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name + KEY_MEANINGFONT);
@@ -155,7 +155,7 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 				pr.setOnPreferenceChangeListener(this);
 				catfont.addPreference(pr);
 			}
-			if ( Build.VERSION.SDK.compareTo("4") >= 0 ){
+			if ( Build.VERSION.SDK_INT >= 4 )			{
 				// 発音記号フォント設定
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name + KEY_PHONEFONT);
@@ -177,7 +177,7 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 				pr.setOnPreferenceChangeListener(this);
 				catfont.addPreference(pr);
 			}
-			if ( Build.VERSION.SDK.compareTo("4") >= 0 ){
+			if ( Build.VERSION.SDK_INT >= 4 )			{
 				// 用例フォント設定
 				final ListPreference pr = new ListPreference(this);
 				pr.setKey(name + KEY_EXAMPLEFONT);
@@ -199,7 +199,7 @@ public class FontSettingsActivity extends PreferenceActivity implements OnPrefer
 				pr.setOnPreferenceChangeListener(this);
 				catfont.addPreference(pr);
 			}
-			if ( Build.VERSION.SDK.compareTo("4") >= 0 ){	//  Donut 以降の機能
+			if ( Build.VERSION.SDK_INT >= 4 )			{
 				// フォント管理
 				final Preference pr = new Preference(this);
 				pr.setTitle(R.string.fontmanager);
