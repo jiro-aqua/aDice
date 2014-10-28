@@ -103,4 +103,5 @@
 	<string name="dicname_ichirofj">ICHIRO French-Japanese Dictionary</string>
 	<string name="menu_add_wordlist">Add to Wordbook</string>
 	<string name="add_wordlist_msg">You need the \"TanGo Wordbook\" Application.\nDo you want to download now？</string>
+	<string name="normalize">Normalization of search word</string>
 </resources>

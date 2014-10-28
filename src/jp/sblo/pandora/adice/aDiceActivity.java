@@ -86,6 +86,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
     private Handler mHandler = new Handler();
     private boolean registLongPress = false;
     private boolean mExitFlag = false;
+    private boolean mNormalize = true;
 
     private final Runnable mLongPressAction = new Runnable() {
         @Override
@@ -183,7 +184,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
             {
 
                 if (mInitialized){
-                    String text = DiceFactory.convert(charsequence);
+                    String text = mNormalize ? DiceFactory.convert(charsequence) : charsequence.toString();
 
                     if (text.length() > 0 && !mLast.equals(text)) {
                         int timer = mDelay;
@@ -521,6 +522,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
         SettingsActivity.Settings set = SettingsActivity.readSettings(this);
 
         mDelay = set.delay;
+        mNormalize = set.normalize;
 
         for (int i = 0; i < mDice.getDicNum(); i++) {
             SettingsActivity.apllySettings(this, mDice.getDicInfo(i));
@@ -575,7 +577,7 @@ public class aDiceActivity extends Activity implements DicView.Callback
         if (text == null && set.clipboard ) {
             CharSequence clip = mClipboardManager.getText();
             if ( clip != null ){
-    			if (mLastClipboard == null || !clip.equals(mLastClipboard)) {
+                if (mLastClipboard == null || !clip.equals(mLastClipboard)) {
                     text = clip.toString();
                     mLastClipboard = clip;
                 }

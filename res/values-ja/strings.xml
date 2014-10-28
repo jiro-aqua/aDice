@@ -103,4 +103,5 @@
 	<string name="dicname_ichirofj">ICHIRO f2jdic仏和辞書</string>
 	<string name="menu_add_wordlist">単語帳に登録</string>
 	<string name="add_wordlist_msg">単語帳として「TanGo単語帳」が必要です。\n今すぐダウンロードしますか？</string>
+	<string name="normalize">検索語の正規化</string>
 </resources>

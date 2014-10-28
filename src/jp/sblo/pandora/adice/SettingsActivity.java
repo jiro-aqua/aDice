@@ -57,6 +57,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
     public static final String KEY_INDEXFONTSIZE = "|indexfontsize";
     public static final String KEY_FONTS = "fontslist";
 
+    public static final String KEY_NORMALIZE_SEARCH = "normalizesearch";
+
     public static final String KEY_LASTVERSION = "LastVersion";
 
     public static final String DEFAULT_FONT = ".default";
@@ -291,6 +293,13 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                     pr.setTitle(R.string.clipboardsearch);
                     pr.setSummaryOn(R.string.clipboardsearchsummaryon);
                     pr.setSummaryOff(R.string.clipboardsearchsummaryoff);
+                    catdic.addPreference(pr);
+                }
+                {
+                    // 検索語の正規化
+                    final CheckBoxPreference pr = new CheckBoxPreference(this);
+                    pr.setKey(KEY_NORMALIZE_SEARCH);
+                    pr.setTitle(R.string.normalize);
                     catdic.addPreference(pr);
                 }
 //				{
@@ -698,6 +707,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
         boolean fastScroll;
         boolean thai;
         boolean clipboard;
+        boolean normalize;
     }
 
     public	static Settings readSettings(Context ctx)
@@ -709,6 +719,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
         ret.fastScroll = sp.getBoolean(KEY_FASTSCROLL, false);
         ret.thai = sp.getBoolean( KEY_THAI , false );
         ret.clipboard = sp.getBoolean(KEY_CLIPBOARD_SEARCH, false);
+        ret.normalize = sp.getBoolean(KEY_NORMALIZE_SEARCH, true);
         return ret;
     }
 
@@ -735,6 +746,10 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                 Editor editor = sp.edit();
                 editor.putInt(KEY_LASTVERSION, versioncode );
                 editor.commit();
+
+                if ( lastversion <= 30 ){
+                    editor.putBoolean(KEY_NORMALIZE_SEARCH, true).commit();
+                }
             }
 
         } catch (NameNotFoundException e) {
