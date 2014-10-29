@@ -3,7 +3,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   package="jp.sblo.pandora.adice"
   android:versionCode="31"
-  android:versionName="2014.02"
+  android:versionName="2014.01"
   android:installLocation="auto"
   >
   <application
@@ -40,15 +40,15 @@
         </intent-filter>
 
     </activity>
-    <activity android:name=".SettingsActivity" android:label="@string/setting_name">
+    <activity android:name=".SettingsActivity" android:label="@string/setting_name" android:exported="false" >
     </activity>
-    <activity android:name=".AboutActivity" android:label="@string/about_name">
+    <activity android:name=".AboutActivity" android:label="@string/about_name" android:exported="false" >
     </activity>
-    <activity android:name=".FileSelectorActivity" android:label="@string/fileselector_name">
+    <activity android:name=".FileSelectorActivity" android:label="@string/fileselector_name" android:exported="false" >
     </activity>
-    <activity android:name=".FontManagerActivity" android:label="@string/fontmanager_name">
+    <activity android:name=".FontManagerActivity" android:label="@string/fontmanager_name" android:exported="false" >
     </activity>
-    <activity android:name=".FontSettingsActivity" android:label="@string/fontsettings_name">
+    <activity android:name=".FontSettingsActivity" android:label="@string/fontsettings_name" android:exported="false" >
     </activity>
     <activity android:name=".InstallActivity" android:label="@string/install_name"
       android:configChanges="orientation|keyboardHidden"
