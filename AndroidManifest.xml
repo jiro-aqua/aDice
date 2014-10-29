@@ -6,6 +6,9 @@
   android:versionName="2014.01"
   android:installLocation="auto"
   >
+  <uses-sdk android:minSdkVersion="4"
+      android:targetSdkVersion="21"
+      />
   <application
     android:name="aDiceApplication"
     android:icon="@drawable/icon"
@@ -61,9 +64,6 @@
       </intent-filter>
     </activity>
   </application>
-  <uses-sdk android:minSdkVersion="4"
-      android:targetSdkVersion="21"
-      />
    <uses-permission android:name="android.permission.INTERNET" />
    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
    <supports-screens android:smallScreens="true"
