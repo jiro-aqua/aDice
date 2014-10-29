@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="help">Help</string>
+	<string name="help">About aDice</string>
 	<string name="delayforsearch">Delay time for incremental search</string>
 	<string name="incrementalsearch">Incremental Search</string>
 	<string name="menudicset">Dictionary Settings</string>

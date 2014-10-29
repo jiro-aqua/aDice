@@ -922,6 +922,8 @@ public class aDiceActivity extends Activity implements DicView.Callback
                 mSearchHistory.remove(0);
                 mEdittext.setText(cs);
             }
+        }else{
+            finish();
         }
 
     }
