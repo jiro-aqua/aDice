@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical" android:layout_width="fill_parent"
-  android:layout_height="fill_parent" android:id="@+id/LinearLayout01">
+  android:orientation="vertical" android:layout_width="match_parent"
+  android:layout_height="match_parent" android:id="@+id/LinearLayout01">
 
 
-  <LinearLayout
-    android:orientation="horizontal" android:layout_width="fill_parent"
+  <RelativeLayout
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
     <jp.sblo.pandora.adice.DicEditText
-      android:id="@+id/EditText01" android:layout_width="wrap_content"
-      android:capitalize="none" android:layout_weight="1"
-      android:layout_height="fill_parent" android:singleLine="true"
+      android:id="@+id/EditText01"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:capitalize="none"
+      android:singleLine="true"
+      android:paddingRight="32dip"
        />
-    <ImageButton android:layout_width="wrap_content"  android:src="@drawable/clr"
-      android:layout_height="fill_parent" android:id="@+id/ButtonClear" />
-  </LinearLayout>
+    <ImageButton
+      android:id="@+id/ButtonClear"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/clr"
+      android:background="@null"
+      android:layout_alignParentRight="true"
+      android:layout_centerVertical="true"
+      android:paddingRight="8dip"
+     />
+  </RelativeLayout>
   <jp.sblo.pandora.adice.DicView
-    android:id="@+id/DicView01" android:layout_width="fill_parent"
-    android:layout_height="fill_parent" />
+    android:id="@+id/DicView01"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
 
 </LinearLayout>
